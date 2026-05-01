@@ -1,264 +1,438 @@
+codeHtml
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI | Pro Neural Assistant</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    <title>Aether AI | Neural Intelligence Directory</title>
+    <!-- React & Babel for Standalone Execution -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Sophisticated Dark Theme Styles */
         body {
-            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
             background-color: #080808;
-            color: white;
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
-            min-h-screen;
+            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem;
-            backdrop-filter: blur(12px);
+        .font-serif { font-family: 'Georgia', serif; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #818CF8; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .accent-glow {
+            box-shadow: 0 0 40px rgba(129, 140, 248, 0.1);
         }
-        .chat-box { height: 450px; overflow-y: auto; }
-        .user-msg { background: #818CF8; margin-left: auto; border-radius: 1rem 1rem 0 1rem; }
-        .ai-msg { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem 1rem 1rem 0; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
+    <div id="root"></div>
 
-    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-12">
-        <div class="flex items-center gap-2 font-bold italic text-2xl tracking-tighter">
-            <div class="w-3 h-3 rounded-full bg-[#818CF8]"></div>
-            <span>Aether.ai</span>
-        </div>
-        <div class="text-[10px] tracking-[3px] opacity-40 uppercase">System: Alamin OS</div>
-    </nav>
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div>
-            <span class="text-[#818CF8] text-xs font-bold uppercase tracking-[4px] mb-4 block">Neural Interface v2.0</span>
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">Forge the <br>Future of AI.</h1>
-            <p class="text-white/40 text-lg mb-8">আলামিন হোসাইন এর নিজস্ব এআই অ্যাসিস্ট্যান্ট এবং প্রিমিয়াম টুলস।</p>
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="glass-card p-4">
-                    <span class="text-[8px] text-[#818CF8] font-bold uppercase">Image Gen</span>
-                    <h4 class="text-md font-bold">Midjourney</h4>
-                </div>
-                <div class="glass-card p-4">
-                    <span class="text-[8px] text-[#818CF8] font-bold uppercase">Code AI</span>
-                    <h4 class="text-md font-bold">Cursor</h4>
-                </div>
-            </div>
-        </div>
+        // --- Data ---
+        const AI_TOOLS = [
+            { id: 'chatgpt', name: 'ChatGPT', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium' },
+            { id: 'claude', name: 'Claude', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', category: 'Text', link: 'https://claude.ai', pricing: 'Freemium' },
+            { id: 'midjourney', name: 'Midjourney', description: 'Top-tier art generation renowned for photographic realism.', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid' },
+            { id: 'v0', name: 'v0.dev', description: 'AI-powered component generator. Builds React components from natural language.', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium' },
+            { id: 'cursor', name: 'Cursor', description: 'An AI-first code editor for deep codebase understanding.', category: 'Code', link: 'https://www.cursor.com', pricing: 'Freemium' },
+            { id: 'runway', name: 'Runway Gen-3', description: 'Powerful AI video generation for cinematic visuals.', category: 'Video', link: 'https://runwayml.com', pricing: 'Freemium' },
+            { id: 'elevenlabs', name: 'ElevenLabs', description: 'Realistic AI voice generator and text-to-speech engine.', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium' },
+            { id: 'suno', name: 'Suno', description: 'Create full-length songs with lyrics and melody from a simple prompt.', category: 'Audio', link: 'https://suno.com', pricing: 'Freemium' },
+            { id: 'perplexity', name: 'Perplexity AI', description: 'AI-powered search engine with real-time citations.', category: 'Text', link: 'https://www.perplexity.ai', pricing: 'Freemium' }
+        ];
 
-        <div class="glass-card overflow-hidden flex flex-col shadow-2xl border-[#818CF8]/20">
-            <div class="p-4 bg-white/5 border-b border-white/10 flex justify-between items-center">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-[#818CF8]">Aether Live Assistant</span>
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            </div>
-            
-            <div id="chat-content" class="chat-box p-6 space-y-4">
-                <div class="ai-msg p-4 max-w-[85%] text-sm">হ্যালো আলামিন! আমি আপনার এআই। আপনার নতুন এপিআই কি এখন কানেক্টেড। কিছু জিজ্ঞেস করুন।</div>
-            </div>
+        const CATEGORIES = ['All', 'Text', 'Image', 'Video', 'Code', 'Audio'];
 
-            <div id="loading" class="hidden px-6 pb-2 text-[10px] text-[#818CF8] italic animate-pulse">Aether চিন্তা করছে...</div>
-
-            <div class="p-4 bg-black/40 border-t border-white/5 flex gap-2">
-                <input id="user-input" type="text" placeholder="এখানে মেসেজ লিখুন..." 
-                    class="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-3 text-sm focus:outline-none focus:border-[#818CF8]/50">
-                <button onclick="sendMessage()" class="bg-white text-black font-bold px-6 py-2 rounded-full hover:scale-105 transition-all">পাঠান</button>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        const API_KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
-
-        async function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const chatContent = document.getElementById('chat-content');
-            const loading = document.getElementById('loading');
-            const message = inputField.value.trim();
-
-            if (!message) return;
-
-            // User Message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'user-msg p-4 max-w-[85%] text-sm';
-            userDiv.innerText = message;
-            chatContent.appendChild(userDiv);
-            
-            inputField.value = '';
-            loading.classList.remove('hidden');
-            chatContent.scrollTop = chatContent.scrollHeight;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
-                });
-
-                const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
-
-                // AI Message
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'ai-msg p-4 max-w-[85%] text-sm';
-                aiDiv.innerText = aiResponse;
-                chatContent.appendChild(aiDiv);
-            } catch (error) {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'ai-msg p-4 max-w-[85%] text-sm text-red-400';
-                errorDiv.innerText = "কানেকশন সমস্যা। অনুগ্রহ করে API Key চেক করুন।";
-                chatContent.appendChild(errorDiv);
-            } finally {
-                loading.classList.add('hidden');
-                chatContent.scrollTop = chatContent.scrollHeight;
-            }
+        // --- Components ---
+        function Icon({ name, size = 16, className = "" }) {
+            // Mocking Lucide icons for standalone HTML
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
         }
 
-        // Enter key press support
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
+        function App() {
+            const [activeCategory, setActiveCategory] = useState('All');
+            const [searchQuery, setSearchQuery] = useState('');
+
+            useEffect(() => {
+                // Initialize Lucide icons
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [activeCategory, searchQuery]);
+
+            const filteredTools = useMemo(() => {
+                return AI_TOOLS.filter(tool => {
+                    const matchesCat = activeCategory === 'All' || tool.category === activeCategory;
+                    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                       tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCat && matchesSearch;
+                });
+            }, [activeCategory, searchQuery]);
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-[#080808]/60 backdrop-blur-xl border-b border-white/5 px-8 py-6">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tight">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
+                                <span className="text-white">Aether.ai</span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[2px] font-medium text-white/40">
+                                <a href="#directory" className="hover:text-white transition-colors">Directory</a>
+                                <a href="#" className="hover:text-white transition-colors">Documentation</a>
+                                <button className="border border-white/20 text-white px-8 py-2 rounded-full text-[10px] font-bold hover:bg-white/5 transition-all">LOGIN</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <header className="pt-32 pb-24 px-8 text-left max-w-7xl mx-auto w-full">
+                        <span className="text-[11px] uppercase tracking-[4px] text-[#818CF8] mb-8 block font-medium">Enterprise Intelligence Node</span>
+                        <h1 className="font-serif text-6xl md:text-8xl font-normal leading-[0.95] tracking-[-3px] mb-8 max-w-4xl">Forge the Future of <br/> Digital Cognition.</h1>
+                        <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
+                        <div className="flex gap-6">
+                            <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
+                            <button className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all">Neural Search</button>
+                        </div>
+                        <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-7xl mx-auto px-8 w-full py-16" id="directory">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-16">
+                            <div>
+                                <span className="text-[10px] uppercase tracking-[3px] text-[#818CF8] mb-2 block">Repository</span>
+                                <h2 className="font-serif text-5xl">Intelligence Nodes</h2>
+                            </div>
+                            <div className="relative group w-full md:w-80">
+                                <input 
+                                    type="text" 
+                                    placeholder="Semantic query..." 
+                                    className="w-full bg-black/20 border border-white/10 rounded-full px-8 py-4 focus:outline-none focus:border-[#818CF8]/40 transition-all text-xs tracking-widest lowercase"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="flex gap-10 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/5 uppercase tracking-[2px] text-[10px] font-bold">
+                            {CATEGORIES.map(cat => (
+                                <button 
+                                    key={cat} 
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`whitespace-nowrap relative py-2 transition-colors ${activeCategory === cat ? 'text-white' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    {cat}
+                                    {activeCategory === cat && <div className="absolute -bottom-[5px] left-0 right-0 h-[2px] bg-[#818CF8]" />}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredTools.map(tool => (
+                                <div key={tool.id} className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col min-h-[300px] hover:border-[#818CF8]/40 transition-all group">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <span className="text-[10px] uppercase tracking-[2px] text-white/40">{tool.category}</span>
+                                        <span className="text-[10px] font-bold text-[#818CF8] tracking-widest">{tool.pricing}</span>
+                                    </div>
+                                    <h3 className="font-serif text-3xl mb-4 group-hover:translate-x-1 transition-transform duration-500">{tool.name}</h3>
+                                    <p className="text-white/50 text-sm leading-relaxed mb-8 flex-grow">{tool.description}</p>
+                                    <div className="flex justify-between items-center pt-6 border-t border-white/5">
+                                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
+                                            <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
+                                            Active System
+                                        </span>
+                                        <a href={tool.link} target="_blank" className="text-white/40 hover:text-white transition-colors">
+                                            Visit Node →
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="border-t border-white/5 bg-[#080808] py-24 px-8 mt-auto">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
+                            <div className="max-w-md">
+                                <div className="font-serif italic font-bold text-2xl flex items-center gap-2 mb-8">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
+                                    Aether.ai
+                                </div>
+                                <p className="text-white/40 text-sm leading-relaxed">
+                                    The premier ecosystem of autonomous generative tools designed for high-performance engineering and creative synthesis.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-24">
+                                <div>
+                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Navigation</h4>
+                                    <div className="flex flex-col gap-4 text-[11px] uppercase tracking-widest text-white/40">
+                                        <a href="#" className="hover:text-white">Compute</a>
+                                        <a href="#" className="hover:text-white">Models</a>
+                                        <a href="#" className="hover:text-white">Security</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Status</h4>
+                                    <div className="flex gap-4 text-white/40">
+                                        <span>Terminal v4.2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-white/5 flex justify-between items-center text-[9px] uppercase tracking-[3px] text-white/30">
+                            <p>© 2026 Aether Neural Infrastructure</p>
+                            <div className="flex gap-12">
+                                <a href="#" className="hover:text-white">Privacy</a>
+                                <a href="#" className="hover:text-white">Terms</a>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
+codeHtml
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI | Pro Neural Assistant</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    <title>Aether AI | Neural Intelligence Directory</title>
+    <!-- React & Babel for Standalone Execution -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* Sophisticated Dark Theme Styles */
         body {
-            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
             background-color: #080808;
-            color: white;
-            font-family: 'Inter', 'Hind Siliguri', sans-serif;
-            min-h-screen;
+            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
+            color: #FFFFFF;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            -webkit-font-smoothing: antialiased;
         }
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem;
-            backdrop-filter: blur(12px);
+        .font-serif { font-family: 'Georgia', serif; }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #080808; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #818CF8; }
+
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        
+        .accent-glow {
+            box-shadow: 0 0 40px rgba(129, 140, 248, 0.1);
         }
-        .chat-box { height: 450px; overflow-y: auto; }
-        .user-msg { background: #818CF8; margin-left: auto; border-radius: 1rem 1rem 0 1rem; }
-        .ai-msg { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem 1rem 1rem 0; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body>
+    <div id="root"></div>
 
-    <nav class="max-w-6xl mx-auto flex justify-between items-center mb-12">
-        <div class="flex items-center gap-2 font-bold italic text-2xl tracking-tighter">
-            <div class="w-3 h-3 rounded-full bg-[#818CF8]"></div>
-            <span>Aether.ai</span>
-        </div>
-        <div class="text-[10px] tracking-[3px] opacity-40 uppercase">System: Alamin OS</div>
-    </nav>
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
 
-    <main class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10">
-        <div>
-            <span class="text-[#818CF8] text-xs font-bold uppercase tracking-[4px] mb-4 block">Neural Interface v2.0</span>
-            <h1 class="text-5xl md:text-7xl font-bold tracking-tighter mb-6">Forge the <br>Future of AI.</h1>
-            <p class="text-white/40 text-lg mb-8">আলামিন হোসাইন এর নিজস্ব এআই অ্যাসিস্ট্যান্ট এবং প্রিমিয়াম টুলস।</p>
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div class="glass-card p-4">
-                    <span class="text-[8px] text-[#818CF8] font-bold uppercase">Image Gen</span>
-                    <h4 class="text-md font-bold">Midjourney</h4>
-                </div>
-                <div class="glass-card p-4">
-                    <span class="text-[8px] text-[#818CF8] font-bold uppercase">Code AI</span>
-                    <h4 class="text-md font-bold">Cursor</h4>
-                </div>
-            </div>
-        </div>
+        // --- Data ---
+        const AI_TOOLS = [
+            { id: 'chatgpt', name: 'ChatGPT', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium' },
+            { id: 'claude', name: 'Claude', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', category: 'Text', link: 'https://claude.ai', pricing: 'Freemium' },
+            { id: 'midjourney', name: 'Midjourney', description: 'Top-tier art generation renowned for photographic realism.', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid' },
+            { id: 'v0', name: 'v0.dev', description: 'AI-powered component generator. Builds React components from natural language.', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium' },
+            { id: 'cursor', name: 'Cursor', description: 'An AI-first code editor for deep codebase understanding.', category: 'Code', link: 'https://www.cursor.com', pricing: 'Freemium' },
+            { id: 'runway', name: 'Runway Gen-3', description: 'Powerful AI video generation for cinematic visuals.', category: 'Video', link: 'https://runwayml.com', pricing: 'Freemium' },
+            { id: 'elevenlabs', name: 'ElevenLabs', description: 'Realistic AI voice generator and text-to-speech engine.', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium' },
+            { id: 'suno', name: 'Suno', description: 'Create full-length songs with lyrics and melody from a simple prompt.', category: 'Audio', link: 'https://suno.com', pricing: 'Freemium' },
+            { id: 'perplexity', name: 'Perplexity AI', description: 'AI-powered search engine with real-time citations.', category: 'Text', link: 'https://www.perplexity.ai', pricing: 'Freemium' }
+        ];
 
-        <div class="glass-card overflow-hidden flex flex-col shadow-2xl border-[#818CF8]/20">
-            <div class="p-4 bg-white/5 border-b border-white/10 flex justify-between items-center">
-                <span class="text-[10px] font-bold uppercase tracking-widest text-[#818CF8]">Aether Live Assistant</span>
-                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-            </div>
-            
-            <div id="chat-content" class="chat-box p-6 space-y-4">
-                <div class="ai-msg p-4 max-w-[85%] text-sm">হ্যালো আলামিন! আমি আপনার এআই। আপনার নতুন এপিআই কি এখন কানেক্টেড। কিছু জিজ্ঞেস করুন।</div>
-            </div>
+        const CATEGORIES = ['All', 'Text', 'Image', 'Video', 'Code', 'Audio'];
 
-            <div id="loading" class="hidden px-6 pb-2 text-[10px] text-[#818CF8] italic animate-pulse">Aether চিন্তা করছে...</div>
-
-            <div class="p-4 bg-black/40 border-t border-white/5 flex gap-2">
-                <input id="user-input" type="text" placeholder="এখানে মেসেজ লিখুন..." 
-                    class="flex-1 bg-white/5 border border-white/10 rounded-full px-6 py-3 text-sm focus:outline-none focus:border-[#818CF8]/50">
-                <button onclick="sendMessage()" class="bg-white text-black font-bold px-6 py-2 rounded-full hover:scale-105 transition-all">পাঠান</button>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        const API_KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
-
-        async function sendMessage() {
-            const inputField = document.getElementById('user-input');
-            const chatContent = document.getElementById('chat-content');
-            const loading = document.getElementById('loading');
-            const message = inputField.value.trim();
-
-            if (!message) return;
-
-            // User Message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'user-msg p-4 max-w-[85%] text-sm';
-            userDiv.innerText = message;
-            chatContent.appendChild(userDiv);
-            
-            inputField.value = '';
-            loading.classList.remove('hidden');
-            chatContent.scrollTop = chatContent.scrollHeight;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
-                });
-
-                const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
-
-                // AI Message
-                const aiDiv = document.createElement('div');
-                aiDiv.className = 'ai-msg p-4 max-w-[85%] text-sm';
-                aiDiv.innerText = aiResponse;
-                chatContent.appendChild(aiDiv);
-            } catch (error) {
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'ai-msg p-4 max-w-[85%] text-sm text-red-400';
-                errorDiv.innerText = "কানেকশন সমস্যা। অনুগ্রহ করে API Key চেক করুন।";
-                chatContent.appendChild(errorDiv);
-            } finally {
-                loading.classList.add('hidden');
-                chatContent.scrollTop = chatContent.scrollHeight;
-            }
+        // --- Components ---
+        function Icon({ name, size = 16, className = "" }) {
+            // Mocking Lucide icons for standalone HTML
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
         }
 
-        // Enter key press support
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
-        });
+        function App() {
+            const [activeCategory, setActiveCategory] = useState('All');
+            const [searchQuery, setSearchQuery] = useState('');
+
+            useEffect(() => {
+                // Initialize Lucide icons
+                if (window.lucide) {
+                    window.lucide.createIcons();
+                }
+            }, [activeCategory, searchQuery]);
+
+            const filteredTools = useMemo(() => {
+                return AI_TOOLS.filter(tool => {
+                    const matchesCat = activeCategory === 'All' || tool.category === activeCategory;
+                    const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                       tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCat && matchesSearch;
+                });
+            }, [activeCategory, searchQuery]);
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-[#080808]/60 backdrop-blur-xl border-b border-white/5 px-8 py-6">
+                        <div className="max-w-7xl mx-auto flex justify-between items-center">
+                            <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tight">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
+                                <span className="text-white">Aether.ai</span>
+                            </div>
+                            <div className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[2px] font-medium text-white/40">
+                                <a href="#directory" className="hover:text-white transition-colors">Directory</a>
+                                <a href="#" className="hover:text-white transition-colors">Documentation</a>
+                                <button className="border border-white/20 text-white px-8 py-2 rounded-full text-[10px] font-bold hover:bg-white/5 transition-all">LOGIN</button>
+                            </div>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <header className="pt-32 pb-24 px-8 text-left max-w-7xl mx-auto w-full">
+                        <span className="text-[11px] uppercase tracking-[4px] text-[#818CF8] mb-8 block font-medium">Enterprise Intelligence Node</span>
+                        <h1 className="font-serif text-6xl md:text-8xl font-normal leading-[0.95] tracking-[-3px] mb-8 max-w-4xl">Forge the Future of <br/> Digital Cognition.</h1>
+                        <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
+                        <div className="flex gap-6">
+                            <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
+                            <button className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all">Neural Search</button>
+                        </div>
+                        <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
+                    </header>
+
+                    {/* Main Content */}
+                    <main className="max-w-7xl mx-auto px-8 w-full py-16" id="directory">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-16">
+                            <div>
+                                <span className="text-[10px] uppercase tracking-[3px] text-[#818CF8] mb-2 block">Repository</span>
+                                <h2 className="font-serif text-5xl">Intelligence Nodes</h2>
+                            </div>
+                            <div className="relative group w-full md:w-80">
+                                <input 
+                                    type="text" 
+                                    placeholder="Semantic query..." 
+                                    className="w-full bg-black/20 border border-white/10 rounded-full px-8 py-4 focus:outline-none focus:border-[#818CF8]/40 transition-all text-xs tracking-widest lowercase"
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="flex gap-10 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/5 uppercase tracking-[2px] text-[10px] font-bold">
+                            {CATEGORIES.map(cat => (
+                                <button 
+                                    key={cat} 
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`whitespace-nowrap relative py-2 transition-colors ${activeCategory === cat ? 'text-white' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    {cat}
+                                    {activeCategory === cat && <div className="absolute -bottom-[5px] left-0 right-0 h-[2px] bg-[#818CF8]" />}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {filteredTools.map(tool => (
+                                <div key={tool.id} className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col min-h-[300px] hover:border-[#818CF8]/40 transition-all group">
+                                    <div className="flex justify-between items-start mb-6">
+                                        <span className="text-[10px] uppercase tracking-[2px] text-white/40">{tool.category}</span>
+                                        <span className="text-[10px] font-bold text-[#818CF8] tracking-widest">{tool.pricing}</span>
+                                    </div>
+                                    <h3 className="font-serif text-3xl mb-4 group-hover:translate-x-1 transition-transform duration-500">{tool.name}</h3>
+                                    <p className="text-white/50 text-sm leading-relaxed mb-8 flex-grow">{tool.description}</p>
+                                    <div className="flex justify-between items-center pt-6 border-t border-white/5">
+                                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
+                                            <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
+                                            Active System
+                                        </span>
+                                        <a href={tool.link} target="_blank" className="text-white/40 hover:text-white transition-colors">
+                                            Visit Node →
+                                        </a>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="border-t border-white/5 bg-[#080808] py-24 px-8 mt-auto">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
+                            <div className="max-w-md">
+                                <div className="font-serif italic font-bold text-2xl flex items-center gap-2 mb-8">
+                                    <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
+                                    Aether.ai
+                                </div>
+                                <p className="text-white/40 text-sm leading-relaxed">
+                                    The premier ecosystem of autonomous generative tools designed for high-performance engineering and creative synthesis.
+                                </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-24">
+                                <div>
+                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Navigation</h4>
+                                    <div className="flex flex-col gap-4 text-[11px] uppercase tracking-widest text-white/40">
+                                        <a href="#" className="hover:text-white">Compute</a>
+                                        <a href="#" className="hover:text-white">Models</a>
+                                        <a href="#" className="hover:text-white">Security</a>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Status</h4>
+                                    <div className="flex gap-4 text-white/40">
+                                        <span>Terminal v4.2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-white/5 flex justify-between items-center text-[9px] uppercase tracking-[3px] text-white/30">
+                            <p>© 2026 Aether Neural Infrastructure</p>
+                            <div className="flex gap-12">
+                                <a href="#" className="hover:text-white">Privacy</a>
+                                <a href="#" className="hover:text-white">Terms</a>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
