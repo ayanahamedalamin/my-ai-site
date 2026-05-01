@@ -3,38 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI | Neural Intelligence Directory</title>
-    <!-- React & Babel for Standalone Execution -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Aether - AI Tool Directory</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Sophisticated Dark Theme Styles */
         body {
-            background-color: #080808;
-            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
-            color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             -webkit-font-smoothing: antialiased;
         }
-        .font-serif { font-family: 'Georgia', serif; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #818CF8; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
         .accent-glow {
-            box-shadow: 0 0 40px rgba(129, 140, 248, 0.1);
+            box-shadow: 0 0 80px -20px rgba(129, 140, 248, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -44,26 +40,33 @@
     <script type="text/babel">
         const { useState, useMemo, useEffect } = React;
 
-        // --- Data ---
         const AI_TOOLS = [
-            { id: 'chatgpt', name: 'ChatGPT', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium' },
-            { id: 'claude', name: 'Claude', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', category: 'Text', link: 'https://claude.ai', pricing: 'Freemium' },
-            { id: 'midjourney', name: 'Midjourney', description: 'Top-tier art generation renowned for photographic realism.', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid' },
-            { id: 'v0', name: 'v0.dev', description: 'AI-powered component generator. Builds React components from natural language.', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium' },
-            { id: 'cursor', name: 'Cursor', description: 'An AI-first code editor for deep codebase understanding.', category: 'Code', link: 'https://www.cursor.com', pricing: 'Freemium' },
-            { id: 'runway', name: 'Runway Gen-3', description: 'Powerful AI video generation for cinematic visuals.', category: 'Video', link: 'https://runwayml.com', pricing: 'Freemium' },
-            { id: 'elevenlabs', name: 'ElevenLabs', description: 'Realistic AI voice generator and text-to-speech engine.', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium' },
-            { id: 'suno', name: 'Suno', description: 'Create full-length songs with lyrics and melody from a simple prompt.', category: 'Audio', link: 'https://suno.com', pricing: 'Freemium' },
-            { id: 'perplexity', name: 'Perplexity AI', description: 'AI-powered search engine with real-time citations.', category: 'Text', link: 'https://www.perplexity.ai', pricing: 'Freemium' }
+            { id: '1', name: 'ChatGPT', category: 'Text', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', url: 'https://chat.openai.com', pricing: 'Freemium' },
+            { id: '2', name: 'Midjourney', category: 'Image', description: 'Top-tier art generation renowned for photographic realism.', url: 'https://midjourney.com', pricing: 'Paid' },
+            { id: '3', name: 'Runway Gen-3', category: 'Video', description: 'Powerful AI video generation for cinematic visuals.', url: 'https://runwayml.com', pricing: 'Freemium' },
+            { id: '4', name: 'Claude', category: 'Text', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', url: 'https://claude.ai', pricing: 'Freemium' },
+            { id: '5', name: 'v0.dev', category: 'Code', description: 'AI-powered component generator. Builds React components from natural language.', url: 'https://v0.dev', pricing: 'Freemium' },
+            { id: '6', name: 'ElevenLabs', category: 'Audio', description: 'Realistic AI voice generator and text-to-speech engine.', url: 'https://elevenlabs.io', pricing: 'Freemium' },
+            { id: '7', name: 'Suno', category: 'Audio', description: 'Create full-length songs with lyrics and melody from a simple prompt.', url: 'https://suno.com', pricing: 'Freemium' },
+            { id: '8', name: 'Cursor', category: 'Code', description: 'An AI-first code editor for deep codebase understanding.', url: 'https://cursor.sh', pricing: 'Freemium' },
+            { id: '9', name: 'Perplexity AI', category: 'Text', description: 'AI-powered search engine with real-time citations.', url: 'https://perplexity.ai', pricing: 'Freemium' },
         ];
 
         const CATEGORIES = ['All', 'Text', 'Image', 'Video', 'Code', 'Audio'];
 
-        // --- Components ---
-        function Icon({ name, size = 16, className = "" }) {
-            // Mocking Lucide icons for standalone HTML
-            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
-        }
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const iconRef = React.useRef(null);
+            useEffect(() => {
+                if (iconRef.current) {
+                    lucide.createIcons({
+                        icons: { [name]: lucide.icons[name] },
+                        nameAttr: 'data-lucide',
+                        attrs: { class: className, width: size, height: size }
+                    });
+                }
+            }, [name, size, className]);
+            return <i ref={iconRef} data-lucide={name}></i>;
+        };
 
         function App() {
             const [activeCategory, setActiveCategory] = useState('All');
@@ -77,7 +80,6 @@
             const [isSearching, setIsSearching] = useState(false);
 
             useEffect(() => {
-                // Initialize Lucide icons
                 if (window.lucide) {
                     window.lucide.createIcons();
                 }
@@ -113,11 +115,23 @@
 
                 try {
                     const ctx = `System context: You are Aether AI assistant. Guide the user on AI tools. Our tools: ${AI_TOOLS.map(t=>t.name).join(', ')}. Keep replies brief and professional.`;
-                    const contents = [{ role: 'user', parts: [{ text: ctx }] }, { role: 'model', parts: [{ text: 'Understood.'}] }, ...newMessages];
+                    
+                    const apiMessages = newMessages.filter(msg => 
+                        !msg.parts[0].text.includes('Neural Interface Active') && 
+                        !msg.parts[0].text.includes('Error connecting') &&
+                        !msg.parts[0].text.includes('Error: Please') // filter any local error strings
+                    );
+
+                    const contents = [
+                        { role: 'user', parts: [{ text: ctx }] }, 
+                        { role: 'model', parts: [{ text: 'Understood.'}] }, 
+                        ...apiMessages
+                    ];
+
                     const reply = await callGemini(contents);
                     setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: reply }] }]);
                 } catch (err) {
-                    setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: 'Error connecting to neural node. Check API key.' }] }]);
+                    setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: `Error: Please check your API key.` }] }]);
                 } finally {
                     setIsAiLoading(false);
                 }
@@ -145,21 +159,24 @@
 
             const filteredTools = useMemo(() => {
                 return AI_TOOLS.filter(tool => {
-                    const matchesCat = activeCategory === 'All' || tool.category === activeCategory;
+                    const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
                     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                       tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-                    return matchesCat && matchesSearch;
+                                        tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
                 });
             }, [activeCategory, searchQuery]);
 
             return (
-                <div className="flex flex-col min-h-screen">
-                    {/* Navigation */}
-                    <nav className="sticky top-0 z-50 bg-[#080808]/60 backdrop-blur-xl border-b border-white/5 px-8 py-6">
-                        <div className="max-w-7xl mx-auto flex justify-between items-center">
-                            <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tight">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
-                                <span className="text-white">Aether.ai</span>
+                <div className="min-h-screen flex flex-col bg-[#050505] accent-glow selection:bg-[#818CF8]/30">
+                    <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-[#818CF8]/10 to-transparent pointer-events-none" />
+                    
+                    <header className="pt-12 px-8 max-w-7xl mx-auto w-full relative z-10">
+                        <div className="flex justify-between items-start mb-24">
+                            <div className="flex items-center gap-4">
+                                <div className="w-8 h-8 rounded bg-white flex items-center justify-center">
+                                    <div className="w-4 h-4 border-[2px] border-black rounded-full" />
+                                </div>
+                                <span className="font-bold tracking-[4px] text-sm hidden sm:block">AETHER</span>
                             </div>
                             <div className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[2px] font-medium text-white/40">
                                 <a href="#directory" className="hover:text-white transition-colors">Directory</a>
@@ -169,25 +186,27 @@
                                 <button className="border border-white/20 text-white px-8 py-2 rounded-full text-[10px] font-bold hover:bg-white/5 transition-all">LOGIN</button>
                             </div>
                         </div>
-                    </nav>
-
-                    {/* Hero */}
-                    <header className="pt-32 pb-24 px-8 text-left max-w-7xl mx-auto w-full">
-                        <span className="text-[11px] uppercase tracking-[4px] text-[#818CF8] mb-8 block font-medium">Enterprise Intelligence Node</span>
-                        <h1 className="font-serif text-6xl md:text-8xl font-normal leading-[0.95] tracking-[-3px] mb-8 max-w-4xl">Forge the Future of <br/> Digital Cognition.</h1>
-                        <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
-                        <div className="flex gap-6">
-                            <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
-                            <button onClick={() => setIsChatOpen(true)} className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-2">
-                                <Icon name="message-square" size={14} /> AI Assistant
-                            </button>
+                        
+                        <div className="max-w-3xl">
+                            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-pulse" />
+                                <span className="text-[10px] font-medium tracking-[2px] uppercase">Enterprise Intelligence Node</span>
+                            </div>
+                            
+                            <h1 className="text-5xl md:text-7xl font-light tracking-tight mb-8 leading-[1.1] font-serif">Forge the Future of <br/><span className="text-[#818CF8] italic opacity-90">Digital Cognition.</span></h1>
+                            <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
+                            <div className="flex gap-6">
+                                <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
+                                <button onClick={() => setIsChatOpen(true)} className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-2">
+                                    <Icon name="message-square" size={14} /> AI Assistant
+                                </button>
+                            </div>
+                            <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
                         </div>
-                        <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
                     </header>
 
-                    {/* Main Content */}
-                    <main className="max-w-7xl mx-auto px-8 w-full py-16" id="directory">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-16">
+                    <main className="flex-grow py-24 px-8 max-w-7xl mx-auto w-full relative z-10" id="directory">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                             <div>
                                 <span className="text-[10px] uppercase tracking-[3px] text-[#818CF8] mb-2 block">Repository</span>
                                 <h2 className="font-serif text-5xl">Intelligence Nodes</h2>
@@ -206,83 +225,69 @@
                                     disabled={isSearching}
                                     className="bg-[#818CF8]/10 text-[#818CF8] border border-[#818CF8]/30 px-6 rounded-full hover:bg-[#818CF8]/20 transition-colors text-[10px] uppercase tracking-widest whitespace-nowrap"
                                 >
-                                    {isSearching ? <Icon name="loader-2" size={14} className="animate-spin" /> : 'Smart Search'}
+                                    {isSearching ? <Icon name="loader" size={14} className="animate-spin" /> : 'Smart Search'}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Filters */}
-                        <div className="flex gap-10 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/5 uppercase tracking-[2px] text-[10px] font-bold">
-                            {CATEGORIES.map(cat => (
-                                <button 
-                                    key={cat} 
-                                    onClick={() => setActiveCategory(cat)}
-                                    className={`whitespace-nowrap relative py-2 transition-colors ${activeCategory === cat ? 'text-white' : 'text-white/30 hover:text-white'}`}
+                        <div className="flex flex-wrap gap-2 mb-12">
+                            {CATEGORIES.map(category => (
+                                <button
+                                    key={category}
+                                    onClick={() => setActiveCategory(category)}
+                                    className={`px-6 py-2 rounded-full text-[10px] uppercase tracking-widest transition-all ${
+                                        activeCategory === category 
+                                            ? 'bg-white text-black font-bold' 
+                                            : 'border border-white/10 text-white/50 hover:border-white/30 hover:text-white'
+                                    }`}
                                 >
-                                    {cat}
-                                    {activeCategory === cat && <div className="absolute -bottom-[5px] left-0 right-0 h-[2px] bg-[#818CF8]" />}
+                                    {category}
                                 </button>
                             ))}
                         </div>
 
-                        {/* Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredTools.map(tool => (
-                                <div key={tool.id} className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col min-h-[300px] hover:border-[#818CF8]/40 transition-all group">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <span className="text-[10px] uppercase tracking-[2px] text-white/40">{tool.category}</span>
-                                        <span className="text-[10px] font-bold text-[#818CF8] tracking-widest">{tool.pricing}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredTools.map((tool) => (
+                                <div key={tool.id} className="group border border-white/5 bg-[#0a0a0a] rounded-2xl p-8 hover:bg-[#111] hover:border-white/10 transition-all cursor-pointer flex flex-col justify-between min-h-[280px]">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-6">
+                                            <span className="text-[#818CF8] text-[9px] uppercase tracking-[2px] font-bold">{tool.category}</span>
+                                            <span className="text-[9px] uppercase tracking-[2px] text-white/30 border border-white/10 px-3 py-1 rounded-full">{tool.pricing}</span>
+                                        </div>
+                                        <h3 className="text-2xl font-serif mb-4 group-hover:text-[#818CF8] transition-colors">{tool.name}</h3>
+                                        <p className="text-white/40 text-sm leading-relaxed">{tool.description}</p>
                                     </div>
-                                    <h3 className="font-serif text-3xl mb-4 group-hover:translate-x-1 transition-transform duration-500">{tool.name}</h3>
-                                    <p className="text-white/50 text-sm leading-relaxed mb-8 flex-grow">{tool.description}</p>
-                                    <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
-                                            <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
+                                    <div className="mt-8 flex items-center justify-between opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                        <span className="text-[#818CF8] text-[10px] uppercase tracking-widest font-bold flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-pulse" />
                                             Active System
                                         </span>
-                                        <a href={tool.link} target="_blank" className="text-white/40 hover:text-white transition-colors">
-                                            Visit Node →
+                                        <a href={tool.url} target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors flex items-center gap-2 text-xs">
+                                            Visit Node <Icon name="external-link" size={14} />
                                         </a>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </main>
-
-                    {/* Footer */}
-                    <footer className="border-t border-white/5 bg-[#080808] py-24 px-8 mt-auto">
-                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-                            <div className="max-w-md">
-                                <div className="font-serif italic font-bold text-2xl flex items-center gap-2 mb-8">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
-                                    Aether.ai
-                                </div>
-                                <p className="text-white/40 text-sm leading-relaxed">
-                                    The premier ecosystem of autonomous generative tools designed for high-performance engineering and creative synthesis.
+                        {filteredTools.length === 0 && (
+                            <div className="py-24 text-center border border-white/5 rounded-2xl bg-white/[0.02]">
+                                <Icon name="search" size={32} className="mx-auto text-white/20 mb-4" />
+                                <p className="text-white/40 text-sm flex items-center justify-center gap-2">
+                                    No parameters matching <span className="text-[#818CF8]">"{searchQuery}"</span>
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-24">
-                                <div>
-                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Navigation</h4>
-                                    <div className="flex flex-col gap-4 text-[11px] uppercase tracking-widest text-white/40">
-                                        <a href="#" className="hover:text-white">Compute</a>
-                                        <a href="#" className="hover:text-white">Models</a>
-                                        <a href="#" className="hover:text-white">Security</a>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Status</h4>
-                                    <div className="flex gap-4 text-white/40">
-                                        <span>Terminal v4.2</span>
-                                    </div>
-                                </div>
+                        )}
+                    </main>
+
+                    <footer className="border-t border-white/5 py-12 px-8 mt-auto z-10 bg-[#050505]">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-white/30 tracking-[2px] uppercase">
+                            <div className="flex items-center gap-4">
+                                <div className="w-4 h-4 border border-white/20 rounded-full" />
+                                <span>© 2024 Aether Protocol. All rights reserved.</span>
                             </div>
-                        </div>
-                        <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-white/5 flex justify-between items-center text-[9px] uppercase tracking-[3px] text-white/30">
-                            <p>© 2026 Aether Neural Infrastructure</p>
                             <div className="flex gap-12">
-                                <a href="#" className="hover:text-white">Privacy</a>
-                                <a href="#" className="hover:text-white">Terms</a>
+                                <a href="#" className="hover:text-white transition-colors">Privacy Protocol</a>
+                                <a href="#" className="hover:text-white transition-colors">Term of Consensus</a>
                             </div>
                         </div>
                     </footer>
@@ -382,38 +387,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI | Neural Intelligence Directory</title>
-    <!-- React & Babel for Standalone Execution -->
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <title>Aether - AI Tool Directory</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        /* Sophisticated Dark Theme Styles */
         body {
-            background-color: #080808;
-            background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
-            color: #FFFFFF;
-            font-family: 'Inter', sans-serif;
-            min-height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             -webkit-font-smoothing: antialiased;
         }
-        .font-serif { font-family: 'Georgia', serif; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #080808; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #818CF8; }
-
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        
         .accent-glow {
-            box-shadow: 0 0 40px rgba(129, 140, 248, 0.1);
+            box-shadow: 0 0 80px -20px rgba(129, 140, 248, 0.15);
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
     </style>
 </head>
@@ -423,26 +424,33 @@
     <script type="text/babel">
         const { useState, useMemo, useEffect } = React;
 
-        // --- Data ---
         const AI_TOOLS = [
-            { id: 'chatgpt', name: 'ChatGPT', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium' },
-            { id: 'claude', name: 'Claude', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', category: 'Text', link: 'https://claude.ai', pricing: 'Freemium' },
-            { id: 'midjourney', name: 'Midjourney', description: 'Top-tier art generation renowned for photographic realism.', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid' },
-            { id: 'v0', name: 'v0.dev', description: 'AI-powered component generator. Builds React components from natural language.', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium' },
-            { id: 'cursor', name: 'Cursor', description: 'An AI-first code editor for deep codebase understanding.', category: 'Code', link: 'https://www.cursor.com', pricing: 'Freemium' },
-            { id: 'runway', name: 'Runway Gen-3', description: 'Powerful AI video generation for cinematic visuals.', category: 'Video', link: 'https://runwayml.com', pricing: 'Freemium' },
-            { id: 'elevenlabs', name: 'ElevenLabs', description: 'Realistic AI voice generator and text-to-speech engine.', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium' },
-            { id: 'suno', name: 'Suno', description: 'Create full-length songs with lyrics and melody from a simple prompt.', category: 'Audio', link: 'https://suno.com', pricing: 'Freemium' },
-            { id: 'perplexity', name: 'Perplexity AI', description: 'AI-powered search engine with real-time citations.', category: 'Text', link: 'https://www.perplexity.ai', pricing: 'Freemium' }
+            { id: '1', name: 'ChatGPT', category: 'Text', description: 'The industry-leading conversational AI by OpenAI. Versatile for writing and coding.', url: 'https://chat.openai.com', pricing: 'Freemium' },
+            { id: '2', name: 'Midjourney', category: 'Image', description: 'Top-tier art generation renowned for photographic realism.', url: 'https://midjourney.com', pricing: 'Paid' },
+            { id: '3', name: 'Runway Gen-3', category: 'Video', description: 'Powerful AI video generation for cinematic visuals.', url: 'https://runwayml.com', pricing: 'Freemium' },
+            { id: '4', name: 'Claude', category: 'Text', description: 'Anthropic\'s high-performance LLM known for nuanced writing and safety.', url: 'https://claude.ai', pricing: 'Freemium' },
+            { id: '5', name: 'v0.dev', category: 'Code', description: 'AI-powered component generator. Builds React components from natural language.', url: 'https://v0.dev', pricing: 'Freemium' },
+            { id: '6', name: 'ElevenLabs', category: 'Audio', description: 'Realistic AI voice generator and text-to-speech engine.', url: 'https://elevenlabs.io', pricing: 'Freemium' },
+            { id: '7', name: 'Suno', category: 'Audio', description: 'Create full-length songs with lyrics and melody from a simple prompt.', url: 'https://suno.com', pricing: 'Freemium' },
+            { id: '8', name: 'Cursor', category: 'Code', description: 'An AI-first code editor for deep codebase understanding.', url: 'https://cursor.sh', pricing: 'Freemium' },
+            { id: '9', name: 'Perplexity AI', category: 'Text', description: 'AI-powered search engine with real-time citations.', url: 'https://perplexity.ai', pricing: 'Freemium' },
         ];
 
         const CATEGORIES = ['All', 'Text', 'Image', 'Video', 'Code', 'Audio'];
 
-        // --- Components ---
-        function Icon({ name, size = 16, className = "" }) {
-            // Mocking Lucide icons for standalone HTML
-            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
-        }
+        const Icon = ({ name, size = 20, className = "" }) => {
+            const iconRef = React.useRef(null);
+            useEffect(() => {
+                if (iconRef.current) {
+                    lucide.createIcons({
+                        icons: { [name]: lucide.icons[name] },
+                        nameAttr: 'data-lucide',
+                        attrs: { class: className, width: size, height: size }
+                    });
+                }
+            }, [name, size, className]);
+            return <i ref={iconRef} data-lucide={name}></i>;
+        };
 
         function App() {
             const [activeCategory, setActiveCategory] = useState('All');
@@ -456,7 +464,6 @@
             const [isSearching, setIsSearching] = useState(false);
 
             useEffect(() => {
-                // Initialize Lucide icons
                 if (window.lucide) {
                     window.lucide.createIcons();
                 }
@@ -492,11 +499,23 @@
 
                 try {
                     const ctx = `System context: You are Aether AI assistant. Guide the user on AI tools. Our tools: ${AI_TOOLS.map(t=>t.name).join(', ')}. Keep replies brief and professional.`;
-                    const contents = [{ role: 'user', parts: [{ text: ctx }] }, { role: 'model', parts: [{ text: 'Understood.'}] }, ...newMessages];
+                    
+                    const apiMessages = newMessages.filter(msg => 
+                        !msg.parts[0].text.includes('Neural Interface Active') && 
+                        !msg.parts[0].text.includes('Error connecting') &&
+                        !msg.parts[0].text.includes('Error: Please') // filter any local error strings
+                    );
+
+                    const contents = [
+                        { role: 'user', parts: [{ text: ctx }] }, 
+                        { role: 'model', parts: [{ text: 'Understood.'}] }, 
+                        ...apiMessages
+                    ];
+
                     const reply = await callGemini(contents);
                     setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: reply }] }]);
                 } catch (err) {
-                    setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: 'Error connecting to neural node. Check API key.' }] }]);
+                    setChatMessages(prev => [...prev, { role: 'model', parts: [{ text: `Error: Please check your API key.` }] }]);
                 } finally {
                     setIsAiLoading(false);
                 }
@@ -524,21 +543,24 @@
 
             const filteredTools = useMemo(() => {
                 return AI_TOOLS.filter(tool => {
-                    const matchesCat = activeCategory === 'All' || tool.category === activeCategory;
+                    const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
                     const matchesSearch = tool.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                       tool.description.toLowerCase().includes(searchQuery.toLowerCase());
-                    return matchesCat && matchesSearch;
+                                        tool.description.toLowerCase().includes(searchQuery.toLowerCase());
+                    return matchesCategory && matchesSearch;
                 });
             }, [activeCategory, searchQuery]);
 
             return (
-                <div className="flex flex-col min-h-screen">
-                    {/* Navigation */}
-                    <nav className="sticky top-0 z-50 bg-[#080808]/60 backdrop-blur-xl border-b border-white/5 px-8 py-6">
-                        <div className="max-w-7xl mx-auto flex justify-between items-center">
-                            <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tight">
-                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
-                                <span className="text-white">Aether.ai</span>
+                <div className="min-h-screen flex flex-col bg-[#050505] accent-glow selection:bg-[#818CF8]/30">
+                    <div className="absolute top-0 inset-x-0 h-[500px] bg-gradient-to-b from-[#818CF8]/10 to-transparent pointer-events-none" />
+                    
+                    <header className="pt-12 px-8 max-w-7xl mx-auto w-full relative z-10">
+                        <div className="flex justify-between items-start mb-24">
+                            <div className="flex items-center gap-4">
+                                <div className="w-8 h-8 rounded bg-white flex items-center justify-center">
+                                    <div className="w-4 h-4 border-[2px] border-black rounded-full" />
+                                </div>
+                                <span className="font-bold tracking-[4px] text-sm hidden sm:block">AETHER</span>
                             </div>
                             <div className="hidden md:flex items-center gap-10 text-[11px] uppercase tracking-[2px] font-medium text-white/40">
                                 <a href="#directory" className="hover:text-white transition-colors">Directory</a>
@@ -548,25 +570,27 @@
                                 <button className="border border-white/20 text-white px-8 py-2 rounded-full text-[10px] font-bold hover:bg-white/5 transition-all">LOGIN</button>
                             </div>
                         </div>
-                    </nav>
-
-                    {/* Hero */}
-                    <header className="pt-32 pb-24 px-8 text-left max-w-7xl mx-auto w-full">
-                        <span className="text-[11px] uppercase tracking-[4px] text-[#818CF8] mb-8 block font-medium">Enterprise Intelligence Node</span>
-                        <h1 className="font-serif text-6xl md:text-8xl font-normal leading-[0.95] tracking-[-3px] mb-8 max-w-4xl">Forge the Future of <br/> Digital Cognition.</h1>
-                        <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
-                        <div className="flex gap-6">
-                            <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
-                            <button onClick={() => setIsChatOpen(true)} className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-2">
-                                <Icon name="message-square" size={14} /> AI Assistant
-                            </button>
+                        
+                        <div className="max-w-3xl">
+                            <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 backdrop-blur-md mb-8">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-pulse" />
+                                <span className="text-[10px] font-medium tracking-[2px] uppercase">Enterprise Intelligence Node</span>
+                            </div>
+                            
+                            <h1 className="text-5xl md:text-7xl font-light tracking-tight mb-8 leading-[1.1] font-serif">Forge the Future of <br/><span className="text-[#818CF8] italic opacity-90">Digital Cognition.</span></h1>
+                            <p className="text-white/50 text-lg md:text-xl max-w-lg mb-12">A curated ecosystem of autonomous tools designed for high-performance creative synthesis.</p>
+                            <div className="flex gap-6">
+                                <a href="#directory" className="bg-white text-black font-bold py-4 px-12 rounded-full text-[10px] uppercase tracking-widest hover:scale-105 transition-all">Start Exploring</a>
+                                <button onClick={() => setIsChatOpen(true)} className="border border-white/20 py-4 px-12 rounded-full text-[10px] text-white uppercase tracking-widest hover:bg-white/5 transition-all flex items-center gap-2">
+                                    <Icon name="message-square" size={14} /> AI Assistant
+                                </button>
+                            </div>
+                            <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
                         </div>
-                        <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 w-full" />
                     </header>
 
-                    {/* Main Content */}
-                    <main className="max-w-7xl mx-auto px-8 w-full py-16" id="directory">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-16">
+                    <main className="flex-grow py-24 px-8 max-w-7xl mx-auto w-full relative z-10" id="directory">
+                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
                             <div>
                                 <span className="text-[10px] uppercase tracking-[3px] text-[#818CF8] mb-2 block">Repository</span>
                                 <h2 className="font-serif text-5xl">Intelligence Nodes</h2>
@@ -585,83 +609,69 @@
                                     disabled={isSearching}
                                     className="bg-[#818CF8]/10 text-[#818CF8] border border-[#818CF8]/30 px-6 rounded-full hover:bg-[#818CF8]/20 transition-colors text-[10px] uppercase tracking-widest whitespace-nowrap"
                                 >
-                                    {isSearching ? <Icon name="loader-2" size={14} className="animate-spin" /> : 'Smart Search'}
+                                    {isSearching ? <Icon name="loader" size={14} className="animate-spin" /> : 'Smart Search'}
                                 </button>
                             </div>
                         </div>
 
-                        {/* Filters */}
-                        <div className="flex gap-10 mb-16 overflow-x-auto pb-4 no-scrollbar border-b border-white/5 uppercase tracking-[2px] text-[10px] font-bold">
-                            {CATEGORIES.map(cat => (
-                                <button 
-                                    key={cat} 
-                                    onClick={() => setActiveCategory(cat)}
-                                    className={`whitespace-nowrap relative py-2 transition-colors ${activeCategory === cat ? 'text-white' : 'text-white/30 hover:text-white'}`}
+                        <div className="flex flex-wrap gap-2 mb-12">
+                            {CATEGORIES.map(category => (
+                                <button
+                                    key={category}
+                                    onClick={() => setActiveCategory(category)}
+                                    className={`px-6 py-2 rounded-full text-[10px] uppercase tracking-widest transition-all ${
+                                        activeCategory === category 
+                                            ? 'bg-white text-black font-bold' 
+                                            : 'border border-white/10 text-white/50 hover:border-white/30 hover:text-white'
+                                    }`}
                                 >
-                                    {cat}
-                                    {activeCategory === cat && <div className="absolute -bottom-[5px] left-0 right-0 h-[2px] bg-[#818CF8]" />}
+                                    {category}
                                 </button>
                             ))}
                         </div>
 
-                        {/* Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {filteredTools.map(tool => (
-                                <div key={tool.id} className="bg-white/5 border border-white/10 p-8 rounded-2xl flex flex-col min-h-[300px] hover:border-[#818CF8]/40 transition-all group">
-                                    <div className="flex justify-between items-start mb-6">
-                                        <span className="text-[10px] uppercase tracking-[2px] text-white/40">{tool.category}</span>
-                                        <span className="text-[10px] font-bold text-[#818CF8] tracking-widest">{tool.pricing}</span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredTools.map((tool) => (
+                                <div key={tool.id} className="group border border-white/5 bg-[#0a0a0a] rounded-2xl p-8 hover:bg-[#111] hover:border-white/10 transition-all cursor-pointer flex flex-col justify-between min-h-[280px]">
+                                    <div>
+                                        <div className="flex justify-between items-start mb-6">
+                                            <span className="text-[#818CF8] text-[9px] uppercase tracking-[2px] font-bold">{tool.category}</span>
+                                            <span className="text-[9px] uppercase tracking-[2px] text-white/30 border border-white/10 px-3 py-1 rounded-full">{tool.pricing}</span>
+                                        </div>
+                                        <h3 className="text-2xl font-serif mb-4 group-hover:text-[#818CF8] transition-colors">{tool.name}</h3>
+                                        <p className="text-white/40 text-sm leading-relaxed">{tool.description}</p>
                                     </div>
-                                    <h3 className="font-serif text-3xl mb-4 group-hover:translate-x-1 transition-transform duration-500">{tool.name}</h3>
-                                    <p className="text-white/50 text-sm leading-relaxed mb-8 flex-grow">{tool.description}</p>
-                                    <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
-                                            <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
+                                    <div className="mt-8 flex items-center justify-between opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+                                        <span className="text-[#818CF8] text-[10px] uppercase tracking-widest font-bold flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8] animate-pulse" />
                                             Active System
                                         </span>
-                                        <a href={tool.link} target="_blank" className="text-white/40 hover:text-white transition-colors">
-                                            Visit Node →
+                                        <a href={tool.url} target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors flex items-center gap-2 text-xs">
+                                            Visit Node <Icon name="external-link" size={14} />
                                         </a>
                                     </div>
                                 </div>
                             ))}
                         </div>
-                    </main>
-
-                    {/* Footer */}
-                    <footer className="border-t border-white/5 bg-[#080808] py-24 px-8 mt-auto">
-                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
-                            <div className="max-w-md">
-                                <div className="font-serif italic font-bold text-2xl flex items-center gap-2 mb-8">
-                                    <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
-                                    Aether.ai
-                                </div>
-                                <p className="text-white/40 text-sm leading-relaxed">
-                                    The premier ecosystem of autonomous generative tools designed for high-performance engineering and creative synthesis.
+                        {filteredTools.length === 0 && (
+                            <div className="py-24 text-center border border-white/5 rounded-2xl bg-white/[0.02]">
+                                <Icon name="search" size={32} className="mx-auto text-white/20 mb-4" />
+                                <p className="text-white/40 text-sm flex items-center justify-center gap-2">
+                                    No parameters matching <span className="text-[#818CF8]">"{searchQuery}"</span>
                                 </p>
                             </div>
-                            <div className="grid grid-cols-2 gap-24">
-                                <div>
-                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Navigation</h4>
-                                    <div className="flex flex-col gap-4 text-[11px] uppercase tracking-widest text-white/40">
-                                        <a href="#" className="hover:text-white">Compute</a>
-                                        <a href="#" className="hover:text-white">Models</a>
-                                        <a href="#" className="hover:text-white">Security</a>
-                                    </div>
-                                </div>
-                                <div>
-                                    <h4 className="text-[10px] uppercase tracking-[3px] font-bold mb-8">Status</h4>
-                                    <div className="flex gap-4 text-white/40">
-                                        <span>Terminal v4.2</span>
-                                    </div>
-                                </div>
+                        )}
+                    </main>
+
+                    <footer className="border-t border-white/5 py-12 px-8 mt-auto z-10 bg-[#050505]">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] text-white/30 tracking-[2px] uppercase">
+                            <div className="flex items-center gap-4">
+                                <div className="w-4 h-4 border border-white/20 rounded-full" />
+                                <span>© 2024 Aether Protocol. All rights reserved.</span>
                             </div>
-                        </div>
-                        <div className="max-w-7xl mx-auto mt-24 pt-12 border-t border-white/5 flex justify-between items-center text-[9px] uppercase tracking-[3px] text-white/30">
-                            <p>© 2026 Aether Neural Infrastructure</p>
                             <div className="flex gap-12">
-                                <a href="#" className="hover:text-white">Privacy</a>
-                                <a href="#" className="hover:text-white">Terms</a>
+                                <a href="#" className="hover:text-white transition-colors">Privacy Protocol</a>
+                                <a href="#" className="hover:text-white transition-colors">Term of Consensus</a>
                             </div>
                         </div>
                     </footer>
