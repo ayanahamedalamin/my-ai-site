@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aether AI | Sophisticated Neural Directory</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    },
+                    colors: {
+                        accent: '#818CF8',
+                        bg: '#080808',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-[#080808] text-white antialiased min-h-screen selection:bg-[#818CF8]/30;
+                background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
+            }
+        }
+        @layer components {
+            .glass-card {
+                @apply bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-2xl backdrop-blur-xl transition-all duration-500;
+            }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        }
+    </style>
+
+    <!-- React, ReactDOM, Babel, and Framer Motion CDNs -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect } = React;
+        const { motion, AnimatePresence } = FramerMotion;
+
+        // --- Data ---
+        const AI_TOOLS = [
+            { id: 'chatgpt', name: 'ChatGPT', description: 'Industry-leading conversational AI for writing and coding.', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium' },
+            { id: 'claude', name: 'Claude', description: 'Safe and high-performance LLM with a nuanced writing style.', category: 'Text', link: 'https://claude.ai', pricing: 'Freemium' },
+            { id: 'midjourney', name: 'Midjourney', description: 'Renowned for high-quality artistic image generation.', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid' },
+            { id: 'v0', name: 'v0.dev', description: 'Generate UI components from natural language prompts.', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium' },
+            { id: 'cursor', name: 'Cursor', description: 'AI-first code editor for deep codebase assistance.', category: 'Code', link: 'https://www.cursor.com', pricing: 'Freemium' },
+            { id: 'runway', name: 'Runway', description: 'Powerful neural video generation and editing.', category: 'Video', link: 'https://runwayml.com', pricing: 'Freemium' },
+            { id: 'elevenlabs', name: 'ElevenLabs', description: 'Hyper-realistic AI voice synthesis and cloning.', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium' },
+            { id: 'perplexity', name: 'Perplexity', description: 'AI search engine with real-time citations.', category: 'Text', link: 'https://www.perplexity.ai', pricing: 'Freemium' },
+            { id: 'gemini', name: 'Gemini', description: 'Multimodal AI model by Google.', category: 'Other', link: 'https://gemini.google.com', pricing: 'Freemium' }
+        ];
+
+        const CATEGORIES = ['All', 'Text', 'Image', 'Video', 'Code', 'Audio', 'Other'];
+
+        // --- Components ---
+        const Icon = ({ name, size = 16, className = "" }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }} className={className}></i>;
+        };
+
+        function AetherLogo() {
+            return (
+                <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tight">
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" />
+                    <span className="text-white">Aether.ai</span>
+                </div>
+            );
+        }
+
+        function App() {
+            const [activeCategory, setActiveCategory] = useState('All');
+            const [search, setSearch] = useState('');
+
+            const tools = useMemo(() => {
+                return AI_TOOLS.filter(t => 
+                    (activeCategory === 'All' || t.category === activeCategory) &&
+                    (t.name.toLowerCase().includes(search.toLowerCase()) || 
+                     t.description.toLowerCase().includes(search.toLowerCase()))
+                );
+            }, [activeCategory, search]);
+
+            return (
+                <div className="flex flex-col">
+                    {/* Navigation */}
+                    <nav className="sticky top-0 z-50 bg-[#080808]/60 backdrop-blur-xl border-b border-white/5 px-8 py-6 flex justify-between items-center">
+                        <AetherLogo />
+                        <div className="hidden md:flex items-center gap-12 text-[10px] uppercase tracking-[3px] font-medium text-white/40">
+                            <a href="#" className="hover:text-white">Directory</a>
+                            <a href="#" className="hover:text-white">Security</a>
+                            <button className="border border-white/20 px-8 py-3 rounded-full hover:bg-white/5 transition-all">SYSTEM LOGIN</button>
+                        </div>
+                    </nav>
+
+                    {/* Hero */}
+                    <header className="pt-24 pb-20 px-8 max-w-7xl mx-auto w-full">
+                        <span className="text-[11px] uppercase tracking-[4px] text-[#818CF8] mb-8 block font-medium">Enterprise Intelligence Node</span>
+                        <h1 className="font-serif text-6xl md:text-8xl leading-tight tracking-[-3px] mb-8">Forge The Future Of Cognition.</h1>
+                        <p className="text-white/50 text-lg max-w-lg mb-12">The premier ecosystem of autonomous generative tools designed for high-performance engineering.</p>
+                        <div className="flex gap-6">
+                            <button className="bg-white text-black font-bold py-4 px-12 rounded-full text-xs uppercase tracking-widest">Build</button>
+                            <button className="border border-white/20 py-4 px-12 rounded-full font-bold text-white text-xs uppercase tracking-widest">Connect</button>
+                        </div>
+                        <div className="h-[1px] bg-gradient-to-r from-[#818CF8]/30 to-transparent mt-24 opacity-40 shadow-sm" />
+                    </header>
+
+                    {/* Directory */}
+                    <main className="py-24 px-8 max-w-7xl mx-auto w-full">
+                        <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-16 px-4">
+                            <div>
+                                <span className="text-[10px] uppercase tracking-[3px] text-[#818CF8] mb-3 block">Repositories</span>
+                                <h2 className="font-serif text-5xl">Intelligence Nodes</h2>
+                            </div>
+                            <div className="relative group w-full md:w-80 flex items-center">
+                                <Icon name="search" className="absolute left-6 text-white/20 group-focus-within:text-[#818CF8]" />
+                                <input 
+                                    type="text" 
+                                    placeholder="Semantic search..." 
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="w-full bg-[#080808] border border-white/10 rounded-full pl-14 pr-8 py-4 focus:outline-none focus:border-[#818CF8]/30 text-xs tracking-widest"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Navigation Categories */}
+                        <div className="flex gap-10 mb-16 px-4 border-b border-white/5 text-[10px] font-bold uppercase tracking-[2px] overflow-x-auto no-scrollbar">
+                            {CATEGORIES.map(cat => (
+                                <button 
+                                    key={cat} 
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`py-4 relative transition-all ${activeCategory === cat ? 'text-white' : 'text-white/30 hover:text-white'}`}
+                                >
+                                    {cat}
+                                    {activeCategory === cat && <motion.div layoutId="tab" className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#818CF8]" />}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {tools.map(tool => (
+                                <motion.div 
+                                    key={tool.id}
+                                    initial={{ opacity: 0, y: 10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    className="glass-card p-8 group flex flex-col justify-between min-h-[300px] hover:border-[#818CF8]/40"
+                                >
+                                    <div>
+                                        <div className="flex justify-between items-start mb-6 text-[10px] font-bold uppercase tracking-widest">
+                                            <span className="text-white/40">{tool.category}</span>
+                                            <span className="text-[#818CF8]">{tool.pricing}</span>
+                                        </div>
+                                        <h3 className="font-serif text-3xl mb-4 group-hover:translate-x-1 transition-transform">{tool.name}</h3>
+                                        <p className="text-white/50 text-sm leading-relaxed">{tool.description}</p>
+                                    </div>
+                                    <div className="pt-6 border-t border-white/5 flex justify-between items-center text-[11px] tracking-widest text-white/40 uppercase">
+                                        <span className="flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-[#818CF8]" /> Online</span>
+                                        <a href={tool.link} target="_blank"><Icon name="external-link" /></a>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </main>
+
+                    {/* Footer */}
+                    <footer className="border-t border-white/5 py-24 px-8 mt-12">
+                        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start gap-16">
+                            <div className="max-w-md">
+                                <AetherLogo />
+                                <p className="text-white/30 text-sm mt-8 leading-relaxed">The premier ecosystem of autonomous generative tools designed for high-performance engineering.</p>
+                            </div>
+                            <div className="flex gap-24">
+                                <div>
+                                    <h4 className="text-[10px] tracking-[3px] font-bold uppercase mb-8">System</h4>
+                                    <ul className="text-[11px] tracking-widest text-white/30 space-y-4">
+                                        <li>Compute</li>
+                                        <li>Models</li>
+                                        <li>Security</li>
+                                    </ul>
+                                </div>
+                                <div className="flex gap-6 text-white/30">
+                                    <Icon name="twitter" />
+                                    <Icon name="github" />
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+      </html>
