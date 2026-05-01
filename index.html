@@ -3,75 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI - Smart Assistant</title>
+    <title>Aether AI Master - Multi-Tool Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; }
-        .chat-container { height: 65vh; overflow-y: auto; scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: 'Hind Siliguri', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-content { display: none; }
+        .active-tab { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden">
-        <div class="p-4 bg-blue-600 text-center font-bold text-xl shadow-md">Aether AI Assistant</div>
-        
-        <div id="chat-box" class="chat-container p-4 space-y-4 flex-1">
-            <div class="bg-slate-700 p-3 rounded-lg rounded-tl-none w-fit max-w-[80%]">হ্যালো! আমি আপনার পার্সোনাল এআই। আমাকে যেকোনো প্রশ্ন করতে পারেন।</div>
-        </div>
+<body class="min-h-screen flex flex-col md:flex-row">
 
-        <div class="p-4 bg-slate-900 border-t border-slate-700 flex gap-2">
-            <input id="user-input" type="text" placeholder="এখানে লিখুন..." 
-                class="flex-1 bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
-            <button onclick="sendMessage()" id="send-btn" class="bg-blue-600 p-3 rounded-xl hover:bg-blue-700 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
+    <nav class="w-full md:w-64 glass p-6 space-y-6 flex flex-col">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AI ToolBox</h2>
+        
+        <div class="space-y-2">
+            <button onclick="openTab('chat')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>💬</span> AI Chatbot
+            </button>
+            <button onclick="openTab('code')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>💻</span> Code Helper
+            </button>
+            <button onclick="openTab('image')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>🎨</span> Image Prompt
+            </button>
+            <button onclick="openTab('settings')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>⚙️</span> API Settings
             </button>
         </div>
-    </div>
+        
+        <div class="mt-auto pt-6 text-xs text-slate-500 border-t border-slate-700">
+            Owner: Alamin<br>Powered by Gemini 1.5 Flash
+        </div>
+    </nav>
+
+    <main class="flex-1 p-4 md:p-10 flex flex-col overflow-hidden">
+        
+        <div id="status" class="mb-4 text-sm flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-green-500"></span> System Active
+        </div>
+
+        <div id="chat" class="tab-content active-tab flex-1 flex flex-col h-full glass rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-4 bg-slate-800/50 border-b border-slate-700 font-bold text-center">AI Smart Assistant</div>
+            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <div class="bg-slate-700/50 p-3 rounded-2xl rounded-tl-none w-fit max-w-[80%]">হ্যালো! আমি আপনার অল-ইন-ওয়ান এআই। আজ আপনাকে কীভাবে সাহায্য করতে পারি?</div>
+            </div>
+            <div id="typing" class="hidden px-6 text-xs text-blue-400 mb-2">এআই চিন্তা করছে...</div>
+            <div class="p-4 flex gap-2">
+                <input id="chat-input" type="text" placeholder="এখানে মেসেজ লিখুন..." class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 outline-none focus:border-blue-500">
+                <button onclick="handleAI('chat')" class="bg-blue-600 p-4 rounded-2xl hover:bg-blue-700 shadow-lg">➤</button>
+            </div>
+        </div>
+
+        <div id="code" class="tab-content flex-1 glass rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-4">Programming Assistant</h3>
+            <textarea id="code-input" class="w-full h-40 bg-slate-900 rounded-xl p-4 mb-4 border border-slate-700 outline-none" placeholder="কোন কোডটি লিখে দিতে হবে? (যেমন: Create a login form)"></textarea>
+            <button onclick="handleAI('code')" class="bg-emerald-600 px-6 py-3 rounded-xl font-bold hover:bg-emerald-700">Generate Code</button>
+            <div id="code-output" class="mt-6 p-4 bg-black rounded-xl text-green-400 font-mono text-sm overflow-x-auto whitespace-pre-wrap"></div>
+        </div>
+
+        <div id="image" class="tab-content flex-1 glass rounded-3xl p-6 text-center">
+            <h3 class="text-xl font-bold mb-4">AI Image Prompt Generator</h3>
+            <p class="text-slate-400 mb-6">কি ধরনের ছবি চান লিখুন, আমি আপনাকে প্রফেশনাল প্রম্পট লিখে দেব।</p>
+            <input id="image-input" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 mb-4 outline-none" placeholder="যেমন: A cat in space">
+            <button onclick="handleAI('image')" class="bg-purple-600 px-6 py-3 rounded-xl font-bold hover:bg-purple-700 w-full">Create High-Quality Prompt</button>
+            <div id="image-output" class="mt-6 p-4 border-dashed border-2 border-slate-700 rounded-xl text-slate-300 italic"></div>
+        </div>
+
+        <div id="settings" class="tab-content flex-1 glass rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-4">Configuration</h3>
+            <label class="block text-sm text-slate-400 mb-2">Current API Key:</label>
+            <input type="password" id="api-key-input" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 mb-4" value="AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y">
+            <p class="text-xs text-yellow-500">নোট: যদি এআই কাজ না করে তবে এখানে আপনার নতুন API Key দিয়ে 'Update' বাটনে ক্লিক করুন।</p>
+            <button onclick="updateKey()" class="mt-4 bg-slate-700 px-6 py-2 rounded-lg hover:bg-slate-600 transition">Update Key</button>
+        </div>
+
+    </main>
 
     <script>
-        const API_KEY = "AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y";
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
+        let currentKey = "AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y";
 
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById(tabName).classList.add('active-tab');
+        }
 
-            // User message
-            appendMessage(message, 'user');
-            userInput.value = '';
+        function updateKey() {
+            currentKey = document.getElementById('api-key-input').value;
+            alert("API Key Updated Successfully!");
+        }
+
+        async function handleAI(type) {
+            let prompt = "";
+            let outputElement = null;
+            let inputField = null;
+
+            if(type === 'chat') {
+                inputField = document.getElementById('chat-input');
+                prompt = inputField.value;
+                if(!prompt) return;
+                appendChatMessage(prompt, 'user');
+                inputField.value = "";
+                document.getElementById('typing').classList.remove('hidden');
+            } else if(type === 'code') {
+                prompt = "Act as a professional coder. Write code for: " + document.getElementById('code-input').value;
+                outputElement = document.getElementById('code-output');
+                outputElement.innerText = "Writing code...";
+            } else if(type === 'image') {
+                prompt = "Create a detailed 4k image generation prompt for: " + document.getElementById('image-input').value;
+                outputElement = document.getElementById('image-output');
+                outputElement.innerText = "Generating prompt...";
+            }
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
                 const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
-                appendMessage(aiResponse, 'ai');
+                const result = data.candidates[0].content.parts[0].text;
+
+                if(type === 'chat') {
+                    document.getElementById('typing').classList.add('hidden');
+                    appendChatMessage(result, 'ai');
+                } else {
+                    outputElement.innerText = result;
+                }
+
             } catch (error) {
-                appendMessage("দুঃখিত, কানেকশনে সমস্যা হয়েছে। আবার চেষ্টা করুন।", 'error');
+                if(type === 'chat') {
+                    document.getElementById('typing').classList.add('hidden');
+                    appendChatMessage("Error! আপনার API Key বা ইন্টারনেট কানেকশন চেক করুন।", 'ai');
+                } else {
+                    outputElement.innerText = "Failed to connect to AI.";
+                }
             }
         }
 
-        function appendMessage(text, sender) {
+        function appendChatMessage(text, sender) {
+            const chatBox = document.getElementById('chat-box');
             const div = document.createElement('div');
-            div.className = sender === 'user' ? 'bg-blue-600 p-3 rounded-lg rounded-tr-none w-fit max-w-[80%] ml-auto' : 
-                          sender === 'error' ? 'bg-red-500 p-3 rounded-lg w-fit max-w-[80%]' : 
-                          'bg-slate-700 p-3 rounded-lg rounded-tl-none w-fit max-w-[80%]';
+            div.className = sender === 'user' 
+                ? 'bg-blue-600 p-3 rounded-2xl rounded-tr-none w-fit ml-auto max-w-[85%] shadow-lg' 
+                : 'bg-slate-700/50 p-3 rounded-2xl rounded-tl-none w-fit max-w-[85%] border border-slate-600';
             div.innerText = text;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        userInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") sendMessage();
-        });
+        document.getElementById('chat-input').addEventListener("keypress", (e) => { if (e.key === "Enter") handleAI('chat'); });
     </script>
 </body>
 </html>
@@ -80,75 +171,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI - Smart Assistant</title>
+    <title>Aether AI Master - Multi-Tool Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #0f172a; color: white; font-family: sans-serif; }
-        .chat-container { height: 65vh; overflow-y: auto; scroll-behavior: smooth; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        body { 
+            background: #0f172a; 
+            color: white; 
+            font-family: 'Hind Siliguri', sans-serif;
+            overflow-x: hidden;
+        }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .tab-content { display: none; }
+        .active-tab { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
     </style>
 </head>
-<body class="flex items-center justify-center min-h-screen p-4">
-    <div class="w-full max-w-lg bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 flex flex-col overflow-hidden">
-        <div class="p-4 bg-blue-600 text-center font-bold text-xl shadow-md">Aether AI Assistant</div>
-        
-        <div id="chat-box" class="chat-container p-4 space-y-4 flex-1">
-            <div class="bg-slate-700 p-3 rounded-lg rounded-tl-none w-fit max-w-[80%]">হ্যালো! আমি আপনার পার্সোনাল এআই। আমাকে যেকোনো প্রশ্ন করতে পারেন।</div>
-        </div>
+<body class="min-h-screen flex flex-col md:flex-row">
 
-        <div class="p-4 bg-slate-900 border-t border-slate-700 flex gap-2">
-            <input id="user-input" type="text" placeholder="এখানে লিখুন..." 
-                class="flex-1 bg-slate-800 border border-slate-600 rounded-xl px-4 py-3 focus:outline-none focus:border-blue-500 text-white">
-            <button onclick="sendMessage()" id="send-btn" class="bg-blue-600 p-3 rounded-xl hover:bg-blue-700 transition duration-200">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
+    <nav class="w-full md:w-64 glass p-6 space-y-6 flex flex-col">
+        <h2 class="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">AI ToolBox</h2>
+        
+        <div class="space-y-2">
+            <button onclick="openTab('chat')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>💬</span> AI Chatbot
+            </button>
+            <button onclick="openTab('code')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>💻</span> Code Helper
+            </button>
+            <button onclick="openTab('image')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>🎨</span> Image Prompt
+            </button>
+            <button onclick="openTab('settings')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition flex items-center gap-3">
+                <span>⚙️</span> API Settings
             </button>
         </div>
-    </div>
+        
+        <div class="mt-auto pt-6 text-xs text-slate-500 border-t border-slate-700">
+            Owner: Alamin<br>Powered by Gemini 1.5 Flash
+        </div>
+    </nav>
+
+    <main class="flex-1 p-4 md:p-10 flex flex-col overflow-hidden">
+        
+        <div id="status" class="mb-4 text-sm flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-green-500"></span> System Active
+        </div>
+
+        <div id="chat" class="tab-content active-tab flex-1 flex flex-col h-full glass rounded-3xl overflow-hidden shadow-2xl">
+            <div class="p-4 bg-slate-800/50 border-b border-slate-700 font-bold text-center">AI Smart Assistant</div>
+            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4">
+                <div class="bg-slate-700/50 p-3 rounded-2xl rounded-tl-none w-fit max-w-[80%]">হ্যালো! আমি আপনার অল-ইন-ওয়ান এআই। আজ আপনাকে কীভাবে সাহায্য করতে পারি?</div>
+            </div>
+            <div id="typing" class="hidden px-6 text-xs text-blue-400 mb-2">এআই চিন্তা করছে...</div>
+            <div class="p-4 flex gap-2">
+                <input id="chat-input" type="text" placeholder="এখানে মেসেজ লিখুন..." class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 outline-none focus:border-blue-500">
+                <button onclick="handleAI('chat')" class="bg-blue-600 p-4 rounded-2xl hover:bg-blue-700 shadow-lg">➤</button>
+            </div>
+        </div>
+
+        <div id="code" class="tab-content flex-1 glass rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-4">Programming Assistant</h3>
+            <textarea id="code-input" class="w-full h-40 bg-slate-900 rounded-xl p-4 mb-4 border border-slate-700 outline-none" placeholder="কোন কোডটি লিখে দিতে হবে? (যেমন: Create a login form)"></textarea>
+            <button onclick="handleAI('code')" class="bg-emerald-600 px-6 py-3 rounded-xl font-bold hover:bg-emerald-700">Generate Code</button>
+            <div id="code-output" class="mt-6 p-4 bg-black rounded-xl text-green-400 font-mono text-sm overflow-x-auto whitespace-pre-wrap"></div>
+        </div>
+
+        <div id="image" class="tab-content flex-1 glass rounded-3xl p-6 text-center">
+            <h3 class="text-xl font-bold mb-4">AI Image Prompt Generator</h3>
+            <p class="text-slate-400 mb-6">কি ধরনের ছবি চান লিখুন, আমি আপনাকে প্রফেশনাল প্রম্পট লিখে দেব।</p>
+            <input id="image-input" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 mb-4 outline-none" placeholder="যেমন: A cat in space">
+            <button onclick="handleAI('image')" class="bg-purple-600 px-6 py-3 rounded-xl font-bold hover:bg-purple-700 w-full">Create High-Quality Prompt</button>
+            <div id="image-output" class="mt-6 p-4 border-dashed border-2 border-slate-700 rounded-xl text-slate-300 italic"></div>
+        </div>
+
+        <div id="settings" class="tab-content flex-1 glass rounded-3xl p-6">
+            <h3 class="text-xl font-bold mb-4">Configuration</h3>
+            <label class="block text-sm text-slate-400 mb-2">Current API Key:</label>
+            <input type="password" id="api-key-input" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 mb-4" value="AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y">
+            <p class="text-xs text-yellow-500">নোট: যদি এআই কাজ না করে তবে এখানে আপনার নতুন API Key দিয়ে 'Update' বাটনে ক্লিক করুন।</p>
+            <button onclick="updateKey()" class="mt-4 bg-slate-700 px-6 py-2 rounded-lg hover:bg-slate-600 transition">Update Key</button>
+        </div>
+
+    </main>
 
     <script>
-        const API_KEY = "AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y";
-        const chatBox = document.getElementById('chat-box');
-        const userInput = document.getElementById('user-input');
+        let currentKey = "AIzaSyA7vU0q8NZUvfsSQpvW7Ag0QNjAP5rh4_Y";
 
-        async function sendMessage() {
-            const message = userInput.value.trim();
-            if (!message) return;
+        function openTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active-tab'));
+            document.getElementById(tabName).classList.add('active-tab');
+        }
 
-            // User message
-            appendMessage(message, 'user');
-            userInput.value = '';
+        function updateKey() {
+            currentKey = document.getElementById('api-key-input').value;
+            alert("API Key Updated Successfully!");
+        }
+
+        async function handleAI(type) {
+            let prompt = "";
+            let outputElement = null;
+            let inputField = null;
+
+            if(type === 'chat') {
+                inputField = document.getElementById('chat-input');
+                prompt = inputField.value;
+                if(!prompt) return;
+                appendChatMessage(prompt, 'user');
+                inputField.value = "";
+                document.getElementById('typing').classList.remove('hidden');
+            } else if(type === 'code') {
+                prompt = "Act as a professional coder. Write code for: " + document.getElementById('code-input').value;
+                outputElement = document.getElementById('code-output');
+                outputElement.innerText = "Writing code...";
+            } else if(type === 'image') {
+                prompt = "Create a detailed 4k image generation prompt for: " + document.getElementById('image-input').value;
+                outputElement = document.getElementById('image-output');
+                outputElement.innerText = "Generating prompt...";
+            }
 
             try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${currentKey}`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: message }] }] })
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
                 const data = await response.json();
-                const aiResponse = data.candidates[0].content.parts[0].text;
-                appendMessage(aiResponse, 'ai');
+                const result = data.candidates[0].content.parts[0].text;
+
+                if(type === 'chat') {
+                    document.getElementById('typing').classList.add('hidden');
+                    appendChatMessage(result, 'ai');
+                } else {
+                    outputElement.innerText = result;
+                }
+
             } catch (error) {
-                appendMessage("দুঃখিত, কানেকশনে সমস্যা হয়েছে। আবার চেষ্টা করুন।", 'error');
+                if(type === 'chat') {
+                    document.getElementById('typing').classList.add('hidden');
+                    appendChatMessage("Error! আপনার API Key বা ইন্টারনেট কানেকশন চেক করুন।", 'ai');
+                } else {
+                    outputElement.innerText = "Failed to connect to AI.";
+                }
             }
         }
 
-        function appendMessage(text, sender) {
+        function appendChatMessage(text, sender) {
+            const chatBox = document.getElementById('chat-box');
             const div = document.createElement('div');
-            div.className = sender === 'user' ? 'bg-blue-600 p-3 rounded-lg rounded-tr-none w-fit max-w-[80%] ml-auto' : 
-                          sender === 'error' ? 'bg-red-500 p-3 rounded-lg w-fit max-w-[80%]' : 
-                          'bg-slate-700 p-3 rounded-lg rounded-tl-none w-fit max-w-[80%]';
+            div.className = sender === 'user' 
+                ? 'bg-blue-600 p-3 rounded-2xl rounded-tr-none w-fit ml-auto max-w-[85%] shadow-lg' 
+                : 'bg-slate-700/50 p-3 rounded-2xl rounded-tl-none w-fit max-w-[85%] border border-slate-600';
             div.innerText = text;
             chatBox.appendChild(div);
             chatBox.scrollTop = chatBox.scrollHeight;
         }
 
-        userInput.addEventListener("keypress", function(event) {
-            if (event.key === "Enter") sendMessage();
-        });
+        document.getElementById('chat-input').addEventListener("keypress", (e) => { if (e.key === "Enter") handleAI('chat'); });
     </script>
 </body>
 </html>
