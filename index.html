@@ -3,104 +3,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI Master - Alamin</title>
+    <title>Aether AI | Pro Neural Assistant</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body { background: #0f172a; color: white; font-family: 'Hind Siliguri', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .tab-content { display: none; }
-        .active-tab { display: block; }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col md:flex-row">
-
-    <nav class="w-full md:w-64 glass p-6 space-y-4 flex flex-col">
-        <h2 class="text-2xl font-bold text-blue-400">AI ToolBox</h2>
-        <button onclick="openTab('chat')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">💬 AI Chatbot</button>
-        <button onclick="openTab('code')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">💻 Code Helper</button>
-        <button onclick="openTab('image')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">🎨 Image Prompt</button>
-        <div class="mt-auto text-xs text-slate-500">User: Alamin</div>
-    </nav>
-
-    <main class="flex-1 p-4 md:p-10">
-        <div id="chat" class="tab-content active-tab flex flex-col h-[80vh] glass rounded-3xl overflow-hidden shadow-2xl">
-            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div class="bg-slate-700/50 p-3 rounded-2xl w-fit">হ্যালো আলামিন! আমি আপনার এআই। আপনার নতুন কি দিয়ে আমি তৈরি। কিছু জিজ্ঞেস করুন।</div>
-            </div>
-            <div id="loading" class="hidden px-6 text-blue-400 text-sm mb-2 animate-pulse">এআই উত্তর খুঁজছে...</div>
-            <div class="p-4 flex gap-2">
-                <input id="chat-input" type="text" placeholder="এখানে লিখুন..." class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 outline-none focus:border-blue-500">
-                <button onclick="askAI()" class="bg-blue-600 px-6 rounded-2xl hover:bg-blue-700">পাঠান</button>
-            </div>
-        </div>
-
-        <div id="code" class="tab-content glass rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Code Helper</h3>
-            <textarea id="code-input" class="w-full h-40 bg-slate-900 rounded-xl p-4 mb-4 border border-slate-700" placeholder="কোড প্রম্পট লিখুন..."></textarea>
-            <button onclick="askAI('code')" class="bg-emerald-600 px-6 py-3 rounded-xl">কোড তৈরি করুন</button>
-            <div id="code-output" class="mt-6 p-4 bg-black rounded-xl text-green-400 font-mono text-sm overflow-x-auto"></div>
-        </div>
-
-        <div id="image" class="tab-content glass rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Image Prompt Generator</h3>
-            <input id="image-input" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 mb-4" placeholder="কি ধরনের ছবি চান?">
-            <button onclick="askAI('image')" class="bg-purple-600 px-6 py-3 rounded-xl w-full">প্রম্পট তৈরি করুন</button>
-            <div id="image-output" class="mt-6 p-4 border-dashed border-2 border-slate-700 rounded-xl text-slate-300 italic"></div>
-        </div>
-    </main>
-
     <script>
-        // আপনার নতুন এপিআই কি এখানে বসিয়ে দিলাম
-        const KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
-
-        function openTab(name) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-            document.getElementById(name).classList.add('active-tab');
-        }
-
-        async function askAI(type = 'chat') {
-            let inputId = type === 'chat' ? 'chat-input' : type === 'code' ? 'code-input' : 'image-input';
-            let outputId = type === 'chat' ? 'chat-box' : type === 'code' ? 'code-output' : 'image-output';
-            let prompt = document.getElementById(inputId).value;
-            if(!prompt) return;
-
-            if(type === 'chat') {
-                appendChat(prompt, 'user');
-                document.getElementById('loading').classList.remove('hidden');
-                document.getElementById(inputId).value = '';
-            } else {
-                document.getElementById(outputId).innerText = "প্রসেসিং হচ্ছে...";
-            }
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
-                });
-                const data = await res.json();
-                const text = data.candidates[0].content.parts[0].text;
-
-                if(type === 'chat') {
-                    document.getElementById('loading').classList.add('hidden');
-                    appendChat(text, 'ai');
-                } else {
-                    document.getElementById(outputId).innerText = text;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Hind Siliguri', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    },
+                    colors: {
+                        accent: '#818CF8',
+                        bg: '#080808',
+                    }
                 }
-            } catch (e) {
-                alert("API Key-তে সমস্যা! দয়া করে গুগল স্টুডিওতে গিয়ে Billing বা Consent চেক করুন।");
             }
         }
+    </script>
 
-        function appendChat(text, sender) {
-            const box = document.getElementById('chat-box');
-            const d = document.createElement('div');
-            d.className = sender === 'user' ? 'bg-blue-600 p-3 rounded-2xl ml-auto w-fit max-w-[85%]' : 'bg-slate-700/50 p-3 rounded-2xl w-fit max-w-[85%] border border-slate-600';
-            d.innerText = text;
-            box.appendChild(d);
-            box.scrollTop = box.scrollHeight;
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-[#080808] text-white antialiased min-h-screen selection:bg-[#818CF8]/30;
+                background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
+            }
         }
+        @layer components {
+            .glass-card {
+                @apply bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-2xl backdrop-blur-xl transition-all duration-500;
+            }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            .chat-msg { @apply p-4 rounded-2xl max-w-[85%] mb-4 text-sm leading-relaxed; }
+        }
+    </style>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = FramerMotion;
+
+        // আপনার নতুন এপিআই কি এখানে বসানো হয়েছে
+        const API_KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
+
+        const AI_TOOLS = [
+            { id: 'chatgpt', name: 'ChatGPT', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium', desc: 'Conversational AI' },
+            { id: 'midjourney', name: 'Midjourney', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid', desc: 'Art Generator' },
+            { id: 'v0', name: 'v0.dev', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium', desc: 'UI Generator' },
+            { id: 'elevenlabs', name: 'ElevenLabs', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium', desc: 'Voice AI' },
+            { id: 'pika', name: 'Pika Labs', category: 'Video', link: 'https://pika.art', pricing: 'Freemium', desc: 'Video AI' }
+        ];
+
+        const Icon = ({ name, size = 16 }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }}></i>;
+        };
+
+        function App() {
+            const [messages, setMessages] = useState([{ text: "হ্যালো আলামিন! আমি আপনার পার্সোনাল এআই। আমি কীভাবে সাহায্য করতে পারি?", sender: 'ai' }]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const chatEndRef = useRef(null);
+
+            useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+            const handleSend = async () => {
+                if (!input.trim()) return;
+                const userMsg = input;
+                setMessages(prev => [...prev, { text: userMsg, sender: 'user' }]);
+                setInput('');
+                setLoading(true);
+
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] }] })
+                    });
+                    const data = await res.json();
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    setMessages(prev => [...prev, { text: aiText, sender: 'ai' }]);
+                } catch (err) {
+                    setMessages(prev => [...prev, { text: "কানেকশন সমস্যা। অনুগ্রহ করে আবার চেষ্টা করুন।", sender: 'ai' }]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Nav */}
+                    <nav className="p-6 flex justify-between items-center border-b border-white/5 backdrop-blur-md sticky top-0 z-50">
+                        <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tighter">
+                            <div className="w-2 h-2 rounded-full bg-[#818CF8]" />
+                            <span>Aether.ai</span>
+                        </div>
+                        <button className="text-[10px] tracking-[3px] border border-white/20 px-6 py-2 rounded-full hover:bg-white/5 transition-all">SYSTEM ACTIVE</button>
+                    </nav>
+
+                    {/* Hero & Chat Section */}
+                    <main className="max-w-6xl mx-auto w-full px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div>
+                            <span className="text-[10px] uppercase tracking-[4px] text-[#818CF8] mb-4 block font-medium">Enterprise Intelligence</span>
+                            <h1 className="font-serif text-5xl md:text-7xl leading-tight tracking-tighter mb-6">Forge the Future of AI.</h1>
+                            <p className="text-white/40 text-lg mb-8">আলামিন হোসাইন এর নিজস্ব এআই অ্যাসিস্ট্যান্ট এবং টুল ডিরেক্টরি।</p>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                {AI_TOOLS.map(t => (
+                                    <div key={t.id} className="glass-card p-4 hover:border-[#818CF8]/30 cursor-pointer">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-[8px] text-[#818CF8] tracking-widest uppercase font-bold">{t.category}</span>
+                                            <Icon name="external-link" size={12} className="text-white/20" />
+                                        </div>
+                                        <h4 className="font-serif text-lg">{t.name}</h4>
+                                        <p className="text-[10px] text-white/30">{t.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Integrated Chatbox */}
+                        <div className="glass-card flex flex-col h-[600px] border-[#818CF8]/20 overflow-hidden shadow-2xl">
+                            <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#818CF8]">Aether Live Console</span>
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            </div>
+                            
+                            <div className="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4">
+                                {messages.map((m, i) => (
+                                    <div key={i} className={`chat-msg ${m.sender === 'user' ? 'bg-[#818CF8] text-white ml-auto rounded-tr-none shadow-lg' : 'bg-white/5 border border-white/10 text-white/90 rounded-tl-none'}`}>
+                                        {m.text}
+                                    </div>
+                                ))}
+                                {loading && <div className="text-[10px] text-white/30 italic animate-pulse">Aether is calculating...</div>}
+                                <div ref={chatEndRef} />
+                            </div>
+
+                            <div className="p-4 bg-[#080808] border-t border-white/5 flex gap-2">
+                                <input 
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                    placeholder="মেসেজ লিখুন..." 
+                                    className="flex-1 bg-transparent border border-white/10 rounded-full px-6 py-3 text-sm focus:outline-none focus:border-[#818CF8]/50 transition-all"
+                                />
+                                <button onClick={handleSend} className="bg-white text-black p-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl">
+                                    <Icon name="arrow-up" size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="mt-auto py-8 text-center border-t border-white/5 opacity-20 text-[9px] tracking-[4px]">
+                        © 2026 ALAMIN HOSSAIN | NEURAL NETWORK
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
@@ -109,104 +183,178 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aether AI Master - Alamin</title>
+    <title>Aether AI | Pro Neural Assistant</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body { background: #0f172a; color: white; font-family: 'Hind Siliguri', sans-serif; }
-        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .tab-content { display: none; }
-        .active-tab { display: block; }
-    </style>
-</head>
-<body class="min-h-screen flex flex-col md:flex-row">
-
-    <nav class="w-full md:w-64 glass p-6 space-y-4 flex flex-col">
-        <h2 class="text-2xl font-bold text-blue-400">AI ToolBox</h2>
-        <button onclick="openTab('chat')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">💬 AI Chatbot</button>
-        <button onclick="openTab('code')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">💻 Code Helper</button>
-        <button onclick="openTab('image')" class="w-full text-left p-3 rounded-xl hover:bg-blue-600 transition">🎨 Image Prompt</button>
-        <div class="mt-auto text-xs text-slate-500">User: Alamin</div>
-    </nav>
-
-    <main class="flex-1 p-4 md:p-10">
-        <div id="chat" class="tab-content active-tab flex flex-col h-[80vh] glass rounded-3xl overflow-hidden shadow-2xl">
-            <div id="chat-box" class="flex-1 overflow-y-auto p-4 space-y-4">
-                <div class="bg-slate-700/50 p-3 rounded-2xl w-fit">হ্যালো আলামিন! আমি আপনার এআই। আপনার নতুন কি দিয়ে আমি তৈরি। কিছু জিজ্ঞেস করুন।</div>
-            </div>
-            <div id="loading" class="hidden px-6 text-blue-400 text-sm mb-2 animate-pulse">এআই উত্তর খুঁজছে...</div>
-            <div class="p-4 flex gap-2">
-                <input id="chat-input" type="text" placeholder="এখানে লিখুন..." class="flex-1 bg-slate-900 border border-slate-700 rounded-2xl px-5 py-3 outline-none focus:border-blue-500">
-                <button onclick="askAI()" class="bg-blue-600 px-6 rounded-2xl hover:bg-blue-700">পাঠান</button>
-            </div>
-        </div>
-
-        <div id="code" class="tab-content glass rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Code Helper</h3>
-            <textarea id="code-input" class="w-full h-40 bg-slate-900 rounded-xl p-4 mb-4 border border-slate-700" placeholder="কোড প্রম্পট লিখুন..."></textarea>
-            <button onclick="askAI('code')" class="bg-emerald-600 px-6 py-3 rounded-xl">কোড তৈরি করুন</button>
-            <div id="code-output" class="mt-6 p-4 bg-black rounded-xl text-green-400 font-mono text-sm overflow-x-auto"></div>
-        </div>
-
-        <div id="image" class="tab-content glass rounded-3xl p-6">
-            <h3 class="text-xl font-bold mb-4">Image Prompt Generator</h3>
-            <input id="image-input" type="text" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-5 py-3 mb-4" placeholder="কি ধরনের ছবি চান?">
-            <button onclick="askAI('image')" class="bg-purple-600 px-6 py-3 rounded-xl w-full">প্রম্পট তৈরি করুন</button>
-            <div id="image-output" class="mt-6 p-4 border-dashed border-2 border-slate-700 rounded-xl text-slate-300 italic"></div>
-        </div>
-    </main>
-
     <script>
-        // আপনার নতুন এপিআই কি এখানে বসিয়ে দিলাম
-        const KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
-
-        function openTab(name) {
-            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active-tab'));
-            document.getElementById(name).classList.add('active-tab');
-        }
-
-        async function askAI(type = 'chat') {
-            let inputId = type === 'chat' ? 'chat-input' : type === 'code' ? 'code-input' : 'image-input';
-            let outputId = type === 'chat' ? 'chat-box' : type === 'code' ? 'code-output' : 'image-output';
-            let prompt = document.getElementById(inputId).value;
-            if(!prompt) return;
-
-            if(type === 'chat') {
-                appendChat(prompt, 'user');
-                document.getElementById('loading').classList.remove('hidden');
-                document.getElementById(inputId).value = '';
-            } else {
-                document.getElementById(outputId).innerText = "প্রসেসিং হচ্ছে...";
-            }
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${KEY}`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({contents: [{parts: [{text: prompt}]}]})
-                });
-                const data = await res.json();
-                const text = data.candidates[0].content.parts[0].text;
-
-                if(type === 'chat') {
-                    document.getElementById('loading').classList.add('hidden');
-                    appendChat(text, 'ai');
-                } else {
-                    document.getElementById(outputId).innerText = text;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Hind Siliguri', 'sans-serif'],
+                        serif: ['Georgia', 'serif'],
+                    },
+                    colors: {
+                        accent: '#818CF8',
+                        bg: '#080808',
+                    }
                 }
-            } catch (e) {
-                alert("API Key-তে সমস্যা! দয়া করে গুগল স্টুডিওতে গিয়ে Billing বা Consent চেক করুন।");
             }
         }
+    </script>
 
-        function appendChat(text, sender) {
-            const box = document.getElementById('chat-box');
-            const d = document.createElement('div');
-            d.className = sender === 'user' ? 'bg-blue-600 p-3 rounded-2xl ml-auto w-fit max-w-[85%]' : 'bg-slate-700/50 p-3 rounded-2xl w-fit max-w-[85%] border border-slate-600';
-            d.innerText = text;
-            box.appendChild(d);
-            box.scrollTop = box.scrollHeight;
+    <style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-[#080808] text-white antialiased min-h-screen selection:bg-[#818CF8]/30;
+                background: radial-gradient(circle at 50% -20%, #1a1a2e 0%, #080808 70%);
+            }
         }
+        @layer components {
+            .glass-card {
+                @apply bg-[rgba(255,255,255,0.03)] border border-[rgba(255,255,255,0.1)] rounded-2xl backdrop-blur-xl transition-all duration-500;
+            }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            .chat-msg { @apply p-4 rounded-2xl max-w-[85%] mb-4 text-sm leading-relaxed; }
+        }
+    </style>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo, useEffect, useRef } = React;
+        const { motion, AnimatePresence } = FramerMotion;
+
+        // আপনার নতুন এপিআই কি এখানে বসানো হয়েছে
+        const API_KEY = "AIzaSyDDsPAJi-sCC8L_1Ccyr9tm1SrNZXSC0rU";
+
+        const AI_TOOLS = [
+            { id: 'chatgpt', name: 'ChatGPT', category: 'Text', link: 'https://chat.openai.com', pricing: 'Freemium', desc: 'Conversational AI' },
+            { id: 'midjourney', name: 'Midjourney', category: 'Image', link: 'https://www.midjourney.com', pricing: 'Paid', desc: 'Art Generator' },
+            { id: 'v0', name: 'v0.dev', category: 'Code', link: 'https://v0.dev', pricing: 'Freemium', desc: 'UI Generator' },
+            { id: 'elevenlabs', name: 'ElevenLabs', category: 'Audio', link: 'https://elevenlabs.io', pricing: 'Freemium', desc: 'Voice AI' },
+            { id: 'pika', name: 'Pika Labs', category: 'Video', link: 'https://pika.art', pricing: 'Freemium', desc: 'Video AI' }
+        ];
+
+        const Icon = ({ name, size = 16 }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} style={{ width: size, height: size }}></i>;
+        };
+
+        function App() {
+            const [messages, setMessages] = useState([{ text: "হ্যালো আলামিন! আমি আপনার পার্সোনাল এআই। আমি কীভাবে সাহায্য করতে পারি?", sender: 'ai' }]);
+            const [input, setInput] = useState('');
+            const [loading, setLoading] = useState(false);
+            const chatEndRef = useRef(null);
+
+            useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: "smooth" }); }, [messages]);
+
+            const handleSend = async () => {
+                if (!input.trim()) return;
+                const userMsg = input;
+                setMessages(prev => [...prev, { text: userMsg, sender: 'user' }]);
+                setInput('');
+                setLoading(true);
+
+                try {
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ contents: [{ parts: [{ text: userMsg }] }] })
+                    });
+                    const data = await res.json();
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    setMessages(prev => [...prev, { text: aiText, sender: 'ai' }]);
+                } catch (err) {
+                    setMessages(prev => [...prev, { text: "কানেকশন সমস্যা। অনুগ্রহ করে আবার চেষ্টা করুন।", sender: 'ai' }]);
+                } finally {
+                    setLoading(false);
+                }
+            };
+
+            return (
+                <div className="flex flex-col min-h-screen">
+                    {/* Nav */}
+                    <nav className="p-6 flex justify-between items-center border-b border-white/5 backdrop-blur-md sticky top-0 z-50">
+                        <div className="flex items-center gap-2 font-serif font-bold italic text-2xl tracking-tighter">
+                            <div className="w-2 h-2 rounded-full bg-[#818CF8]" />
+                            <span>Aether.ai</span>
+                        </div>
+                        <button className="text-[10px] tracking-[3px] border border-white/20 px-6 py-2 rounded-full hover:bg-white/5 transition-all">SYSTEM ACTIVE</button>
+                    </nav>
+
+                    {/* Hero & Chat Section */}
+                    <main className="max-w-6xl mx-auto w-full px-6 py-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div>
+                            <span className="text-[10px] uppercase tracking-[4px] text-[#818CF8] mb-4 block font-medium">Enterprise Intelligence</span>
+                            <h1 className="font-serif text-5xl md:text-7xl leading-tight tracking-tighter mb-6">Forge the Future of AI.</h1>
+                            <p className="text-white/40 text-lg mb-8">আলামিন হোসাইন এর নিজস্ব এআই অ্যাসিস্ট্যান্ট এবং টুল ডিরেক্টরি।</p>
+                            
+                            <div className="grid grid-cols-2 gap-4">
+                                {AI_TOOLS.map(t => (
+                                    <div key={t.id} className="glass-card p-4 hover:border-[#818CF8]/30 cursor-pointer">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <span className="text-[8px] text-[#818CF8] tracking-widest uppercase font-bold">{t.category}</span>
+                                            <Icon name="external-link" size={12} className="text-white/20" />
+                                        </div>
+                                        <h4 className="font-serif text-lg">{t.name}</h4>
+                                        <p className="text-[10px] text-white/30">{t.desc}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Integrated Chatbox */}
+                        <div className="glass-card flex flex-col h-[600px] border-[#818CF8]/20 overflow-hidden shadow-2xl">
+                            <div className="p-4 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-widest text-[#818CF8]">Aether Live Console</span>
+                                <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                            </div>
+                            
+                            <div className="flex-1 overflow-y-auto p-6 no-scrollbar space-y-4">
+                                {messages.map((m, i) => (
+                                    <div key={i} className={`chat-msg ${m.sender === 'user' ? 'bg-[#818CF8] text-white ml-auto rounded-tr-none shadow-lg' : 'bg-white/5 border border-white/10 text-white/90 rounded-tl-none'}`}>
+                                        {m.text}
+                                    </div>
+                                ))}
+                                {loading && <div className="text-[10px] text-white/30 italic animate-pulse">Aether is calculating...</div>}
+                                <div ref={chatEndRef} />
+                            </div>
+
+                            <div className="p-4 bg-[#080808] border-t border-white/5 flex gap-2">
+                                <input 
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                    onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                                    placeholder="মেসেজ লিখুন..." 
+                                    className="flex-1 bg-transparent border border-white/10 rounded-full px-6 py-3 text-sm focus:outline-none focus:border-[#818CF8]/50 transition-all"
+                                />
+                                <button onClick={handleSend} className="bg-white text-black p-3 rounded-full hover:scale-105 active:scale-95 transition-all shadow-xl">
+                                    <Icon name="arrow-up" size={20} />
+                                </button>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="mt-auto py-8 text-center border-t border-white/5 opacity-20 text-[9px] tracking-[4px]">
+                        © 2026 ALAMIN HOSSAIN | NEURAL NETWORK
+                    </footer>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
