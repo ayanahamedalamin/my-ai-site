@@ -151,6 +151,7 @@
 
       // --- Components ---
       function Icon({ name, size = 16, className = "" }) {
+        // Mocking Lucide icons for standalone HTML
         return (
           <i
             data-lucide={name}
@@ -197,7 +198,7 @@
         };
 
         const callGemini = async (contents) => {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
           const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -435,7 +436,7 @@
                       {tool.description}
                     </p>
                     <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                      <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
+                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
                         <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
                         Active System
                       </span>
@@ -775,6 +776,7 @@
 
       // --- Components ---
       function Icon({ name, size = 16, className = "" }) {
+        // Mocking Lucide icons for standalone HTML
         return (
           <i
             data-lucide={name}
@@ -821,7 +823,7 @@
         };
 
         const callGemini = async (contents) => {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+          const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
           const response = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1059,7 +1061,7 @@
                       {tool.description}
                     </p>
                     <div className="flex justify-between items-center pt-6 border-t border-white/5">
-                      <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
+                        <span className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
                         <span className="w-1 h-1 rounded-full bg-[#818CF8]" />
                         Active System
                       </span>
@@ -1246,4 +1248,4 @@
       root.render(<App />);
     </script>
   </body>
-    </html>
+      </html>
